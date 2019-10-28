@@ -1,0 +1,62 @@
+package com.minegame.core;
+
+import com.minegame.world.Cell;
+
+import java.awt.*;
+
+/**
+ * An abstract class of all the entities which can exist in the game.
+ */
+public abstract class GameObject {
+    protected GameID id;
+    protected int cellX, cellY, pixelX, pixelY;
+    protected int w;
+    protected int h;
+    protected double velX = 0, velY = 0;
+    protected boolean usesGravity = false;
+    protected boolean usesCollision = false;
+
+    public GameID getID() { return id; }
+    public int getCellY() { return cellY; }
+    public int getCellX() { return cellX; }
+    public int getPixelX() { return pixelX; }
+    public int getPixelY() { return pixelY; }
+    public int getW() { return w; }
+    public int getH() { return h; }
+    public double getVelX() { return velX; }
+    public double getVelY() { return velY; }
+    public boolean falls() {return usesGravity; }
+    public boolean collides() {return usesCollision; }
+
+    public void setID(GameID id) { this.id = id; }
+    public void setCellX(int cellX) { this.cellX = cellX; }
+    public void setCellY(int cellY) { this.cellY = cellY; }
+    public void setPixelX(int pixelX) { this.pixelX = pixelX; }
+    public void setPixelY(int pixelY) { this.pixelY = pixelY; }
+    public void setW(int w) { this.w = w; }
+    public void setH(int h) { this.h = h; }
+    public void setVelX(double x) { this.velX = x; }
+    public void setVelY(double y) { this.velY = y; }
+    public void setUsesGravity(boolean usesGravity) { this.usesGravity = usesGravity; }
+    public void setCellXY(int x, int y) {
+        this.cellX = x;
+        this.cellY = y;
+    }
+    public void setPixelXY(int x, int y) {
+        this.pixelX = x;
+        this.pixelY = y;
+    }
+
+    public void tick() {
+        //If our x pixel value is divisible by ten
+        if(pixelX % Cell.CELL_WIDTH == 0) {
+            cellX = pixelX / Cell.CELL_WIDTH;
+        }
+        if(pixelY % Cell.CELL_HEIGHT == 0) {
+            cellY = pixelY / Cell.CELL_HEIGHT;
+        }
+    };
+
+    public abstract void render(Graphics2D g);
+    public abstract Rectangle getBounds();
+}
