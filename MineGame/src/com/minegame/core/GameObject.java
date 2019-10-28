@@ -9,7 +9,7 @@ import java.awt.*;
  */
 public abstract class GameObject {
     protected GameID id;
-    protected int cellX, cellY, pixelX, pixelY;
+    protected int cellX, cellY, pixelX, pixelY, cameraX, cameraY;
     protected int w;
     protected int h;
     protected double velX = 0, velY = 0;
@@ -21,6 +21,8 @@ public abstract class GameObject {
     public int getCellX() { return cellX; }
     public int getPixelX() { return pixelX; }
     public int getPixelY() { return pixelY; }
+    public int getCameraX() { return cameraX; }
+    public int getCameraY() { return cameraY; }
     public int getW() { return w; }
     public int getH() { return h; }
     public double getVelX() { return velX; }
@@ -33,6 +35,8 @@ public abstract class GameObject {
     public void setCellY(int cellY) { this.cellY = cellY; }
     public void setPixelX(int pixelX) { this.pixelX = pixelX; }
     public void setPixelY(int pixelY) { this.pixelY = pixelY; }
+    public void setCameraX(int cameraX) { this.cameraX = cameraX; }
+    public void setCameraY(int cameraY) { this.cameraY = cameraY; }
     public void setW(int w) { this.w = w; }
     public void setH(int h) { this.h = h; }
     public void setVelX(double x) { this.velX = x; }
@@ -46,13 +50,20 @@ public abstract class GameObject {
         this.pixelX = x;
         this.pixelY = y;
     }
+    public void setCameraXY(int x, int y){
+        this.cameraX = x;
+        this.cameraY = y;
+    }
 
     public void tick() {
+        pixelX = pixelX + (int) velX;
+        pixelY = pixelY - (int) velY;
+
         //If our x pixel value is divisible by ten
-        if(pixelX % Cell.CELL_WIDTH == 0) {
+        if((pixelX - cameraX) % Cell.CELL_WIDTH == 0) {
             cellX = pixelX / Cell.CELL_WIDTH;
         }
-        if(pixelY % Cell.CELL_HEIGHT == 0) {
+        if((pixelY - cameraY) % Cell.CELL_HEIGHT == 0) {
             cellY = pixelY / Cell.CELL_HEIGHT;
         }
     };

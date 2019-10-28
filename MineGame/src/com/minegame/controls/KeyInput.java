@@ -27,7 +27,7 @@ public class KeyInput implements KeyListener {
     public void keyPressed(KeyEvent e) {
         keysPressed.add(e.getKeyCode());
 
-        int multiple = 1;
+        int multiple = SHIFT_MULTIPLE;
         if(keysPressed.size() > 1) {
             //Multiple keys pressed, set shift to true if shift is pressed
             multiple = (keysPressed.contains(KeyEvent.VK_SHIFT)) ? 1 : SHIFT_MULTIPLE;

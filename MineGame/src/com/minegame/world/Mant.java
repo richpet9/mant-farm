@@ -17,7 +17,7 @@ public class Mant extends GameObject {
     public Mant(int cellX, int cellY, Color color) {
         this.cellX = cellX;
         this.cellY = cellY;
-        this.pixelX = cellX * Cell.CELL_WIDTH;
+        this.pixelX = (cellX * Cell.CELL_WIDTH);
         this.pixelY = cellY * Cell.CELL_HEIGHT;
         this.w = Cell.CELL_WIDTH * MANT_WIDTH;
         this.h = Cell.CELL_HEIGHT * MANT_HEIGHT;
@@ -35,18 +35,13 @@ public class Mant extends GameObject {
 
     @Override
     public void tick() {
-        //This is a negative because the top of the screen is 0
-        //going down means pixels goes up
-        pixelY -= velY;
-        pixelX -= velX;
-
         super.tick();
     }
 
     @Override
     public void render(Graphics2D g) {
         g.setColor(color);
-        g.fillRect(pixelX, pixelY , w, h);
+        g.fillRect(pixelX - cameraX, pixelY - cameraY , w, h);
     }
 
 }

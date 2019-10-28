@@ -32,15 +32,11 @@ public class Camera {
     }
 
     public void setY(int newY) {
-        if(newY < offsetTop) {
-            y = offsetTop;
-        } else y = Math.min(newY, offsetBottom);
+        this.y = Game.clamp(newY, offsetTop, offsetBottom);
     }
 
     public void setX(int newX) {
-        if(newX < offsetLeft) {
-            x = offsetLeft;
-        } else x = Math.min(newX, offsetRight);
+        this.x = Game.clamp(newX, offsetLeft, offsetRight);
     }
 
     public void setZoomLevel(double newZoom) {

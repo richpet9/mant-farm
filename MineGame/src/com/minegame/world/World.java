@@ -2,6 +2,7 @@ package com.minegame.world;
 
 import com.minegame.core.Camera;
 import com.minegame.core.GameObject;
+import com.minegame.core.Handler;
 
 import java.awt.*;
 import java.util.Random;
@@ -17,103 +18,23 @@ public class World {
     private Cell[][] cells;
     private int numX;
     private int numY;
-    private Camera camera;
-    private boolean generated = false;
     private Random rand = new Random();
 
     public World(int w, int h) {
-        width = w;
-        height = h;
+        this.width = w;
+        this.height = h;
 
-        numX = width / Cell.CELL_WIDTH;
-        numY = height / Cell.CELL_HEIGHT;
+        this.numX = width / Cell.CELL_WIDTH;
+        this.numY = height / Cell.CELL_HEIGHT;
 
-        cells = new Cell[numX][numY];
-    }
-
-    public int getNumX() {
-        return numX;
-    }
-    public int getNumY() {
-        return numY;
-    }
-    public int getHeight() {
-        return height;
-    }
-    public int getWidth() {
-        return width;
-    }
-
-    public void setCamera(Camera camera) {
-        this.camera = camera;
-    }
-
-    /**
-     * A method to get the cell object at a specific coordinate (on the Cell-Coordinate grid)
-     * @param x The x coordinate
-     * @param y The y coordinate
-     * @return Cell at specified location
-     * @throws IndexOutOfBoundsException when no such cells exists at specified location
-     */
-    public Cell getCell(int x, int y) throws IndexOutOfBoundsException {
-        if(x > numX || x < 0) throw new IndexOutOfBoundsException("Index (x): " + x + " is out of bounds of " + numX);
-        if(y > numY || y < 0 ) throw new IndexOutOfBoundsException("Index (y): " + y + " is out of bounds " + numY);
-        return cells[x][y];
-    }
-
-    /**
-     * Sets the specified location to a cell
-     * @param x The X (cell) location of the cell
-     * @param y The Y (cell) location of the cell
-     * @param cell The Cell to insert
-     */
-    public void setCell(int x, int y, Cell cell) throws IndexOutOfBoundsException {
-        if(x > numX || x < 0) throw new IndexOutOfBoundsException("Index (x): " + x + " is out of bounds of " + numX);
-        if(y > numY || y < 0 ) throw new IndexOutOfBoundsException("Index (y): " + y + " is out of bounds " + numY);
-        cells[x][y] = cell;
-        cell.setCellXY(x, y);
-    }
-
-    /**
-     * Swaps two cells in the cell container
-     * @param a Cell one to swap
-     * @param b Cell two to swap
-     */
-    public void swapCells(Cell a, Cell b) {
-        int aX = a.getCellX();
-        int aY = a.getCellY();
-
-        cells[aX][aY] = b;
-        cells[b.getCellX()][b.getCellY()] = a;
-
-        a.setCellXY(b.getCellX(), b.getCellY());
-        b.setCellXY(aX, aY);
+        this.cells = new Cell[numX][numY];
     }
 
     public void tick() {
-        if(!generated) return;
 
-        //Tick every cell, and move them based on camera pos
-        for(int x = 0; x < numX; x++) {
-            for(int y = 0; y < numY; y++) {
-                int pixX = (x * Cell.CELL_WIDTH) - camera.getX();
-                int pixY = (y * Cell.CELL_HEIGHT) - camera.getY();
-                cells[x][y].setPixelXY(pixX, pixY);
-            }
-        }
     }
 
     public void render(Graphics2D g) {
-        if(!generated) return;
-
-        g.setColor(new Color(0x62514B));
-        g.fillRect(0, 0, width, height);
-
-        for(int x = 0; x < numX; x++) {
-            for(int y = 0; y < numY; y++) {
-                cells[x][y].render(g);
-            }
-        }
     }
 
     private void createLand() {
@@ -343,7 +264,63 @@ public class World {
         long duration = System.nanoTime() - start;
         double ms = duration * 1E-6;
         System.out.println("World generation took: " + ms + "ms");
+    }
 
-        generated = true;
+    public int getNumX() {
+        return numX;
+    }
+    public int getNumY() {
+        return numY;
+    }
+    public int getHeight() {
+        return height;
+    }
+    public int getWidth() {
+        return width;
+    }
+    public Cell[][] getCells() {
+        return this.cells;
+    }
+
+    /**
+     * A method to get the cell object at a specific coordinate (on the Cell-Coordinate grid)
+     * @param x The x coordinate
+     * @param y The y coordinate
+     * @return Cell at specified location
+     * @throws IndexOutOfBoundsException when no such cells exists at specified location
+     */
+    public Cell getCell(int x, int y) throws IndexOutOfBoundsException {
+        if(x > numX || x < 0) throw new IndexOutOfBoundsException("Index (x): " + x + " is out of bounds of " + numX);
+        if(y > numY || y < 0 ) throw new IndexOutOfBoundsException("Index (y): " + y + " is out of bounds " + numY);
+        return cells[x][y];
+    }
+
+    /**
+     * Sets the specified location to a cell
+     * @param x The X (cell) location of the cell
+     * @param y The Y (cell) location of the cell
+     * @param cell The Cell to insert
+     */
+    public void setCell(int x, int y, Cell cell) throws IndexOutOfBoundsException {
+        if(x > numX || x < 0) throw new IndexOutOfBoundsException("Index (x): " + x + " is out of bounds of " + numX);
+        if(y > numY || y < 0 ) throw new IndexOutOfBoundsException("Index (y): " + y + " is out of bounds " + numY);
+        cells[x][y] = cell;
+        cell.setCellXY(x, y);
+    }
+
+    /**
+     * Swaps two cells in the cell container
+     * @param a Cell one to swap
+     * @param b Cell two to swap
+     */
+    public void swapCells(Cell a, Cell b) {
+        int aX = a.getCellX();
+        int aY = a.getCellY();
+
+        cells[aX][aY] = b;
+        cells[b.getCellX()][b.getCellY()] = a;
+
+        a.setCellXY(b.getCellX(), b.getCellY());
+        b.setCellXY(aX, aY);
     }
 }

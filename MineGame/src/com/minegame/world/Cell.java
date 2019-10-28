@@ -32,7 +32,7 @@ public class Cell extends GameObject {
 
     @Override
     public void tick() {
-
+        super.tick();
     }
 
     @Override
@@ -54,7 +54,7 @@ public class Cell extends GameObject {
                     break;
             }
 
-            g.fillRect(pixelX + PADDING, pixelY + PADDING, w - (PADDING * 2), h - (PADDING * 2));
+            g.fillRect(pixelX - cameraX , pixelY - cameraY , w, h);
         }
     }
 

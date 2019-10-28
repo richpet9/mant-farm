@@ -39,7 +39,6 @@ public class Game extends Canvas implements Runnable {
         this.handler = new Handler(world);
         this.menu = new Menu(this, handler);
 
-        world.setCamera(camera);
         this.handler.setCamera(camera);
 
         this.mouseClickListener = new MouseClick(handler, menu);
@@ -145,6 +144,7 @@ public class Game extends Canvas implements Runnable {
         g.drawString("Cell: [" + mouseMoveListener.getCellX()  + ", " + mouseMoveListener.getCellY()   + "]", 10, 65);
         g.drawString("Camera X: " + camera.getX(), 10, 85);
         g.drawString("Camera Y: " + camera.getY(), 10, 105);
+        g.drawString("GameObjects: " + handler.getObjects().size(), 10, 125);
 
         //Clear current screen
         g.dispose();
@@ -158,6 +158,14 @@ public class Game extends Canvas implements Runnable {
             //handler.addObject(testMant);
         }
     }
+
+    public static int clamp(int value, int low, int high) {
+        if(value < low) {
+            value = low;
+        } else value = Math.min(value, high);
+        return value;
+    }
+
 
     //Start her up
     public static void main(String[] args) {
