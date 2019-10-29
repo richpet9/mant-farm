@@ -28,6 +28,7 @@ public class Game extends Canvas implements Runnable {
     private KeyInput keyInput;
     private Handler handler;
     private Menu menu;
+    private HUD hud;
     private Mant testMant;
 
     //DEBUG: variables
@@ -38,10 +39,11 @@ public class Game extends Canvas implements Runnable {
         this.camera = new Camera(0, world.getHeight() - VIEWPORT_HEIGHT, 0, VIEWPORT_WIDTH * 4);
         this.handler = new Handler(world);
         this.menu = new Menu(this, handler);
+        this.hud = new HUD(this, handler);
 
         this.handler.setCamera(camera);
 
-        this.mouseClickListener = new MouseClick(handler, menu);
+        this.mouseClickListener = new MouseClick(handler, menu, hud);
         this.mouseMoveListener = new MouseMove(handler);
         this.mouseWheelListener = new MouseWheel(handler);
         this.keyInput = new KeyInput(handler);
@@ -145,6 +147,8 @@ public class Game extends Canvas implements Runnable {
         g.drawString("Camera X: " + camera.getX(), 10, 85);
         g.drawString("Camera Y: " + camera.getY(), 10, 105);
         g.drawString("GameObjects: " + handler.getObjects().size(), 10, 125);
+
+        hud.render(g);
 
         //Clear current screen
         g.dispose();

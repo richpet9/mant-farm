@@ -1,8 +1,10 @@
 package com.minegame.world;
 
+import com.minegame.core.Game;
 import com.minegame.core.GameID;
 import com.minegame.core.GameObject;
 
+import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -12,7 +14,7 @@ import java.awt.*;
 public class Mant extends GameObject {
     private static final int MANT_WIDTH = 1;    //IN CELLS
     private static final int MANT_HEIGHT = 2;   //IN CELLS
-    private Color color;
+    private Image icon;
 
     public Mant(int cellX, int cellY, Color color) {
         this.cellX = cellX;
@@ -22,10 +24,12 @@ public class Mant extends GameObject {
         this.w = Cell.CELL_WIDTH * MANT_WIDTH;
         this.h = Cell.CELL_HEIGHT * MANT_HEIGHT;
 
-        this.color = color;
         this.id = GameID.MANT;
         this.usesGravity = true;
         this.usesCollision = true;
+
+        ImageIcon i = new ImageIcon(Game.class.getResource("/resources/icons/mant/mant.png"));
+        this.icon = i.getImage();
     }
 
     @Override
@@ -40,8 +44,7 @@ public class Mant extends GameObject {
 
     @Override
     public void render(Graphics2D g) {
-        g.setColor(color);
-        g.fillRect(pixelX - cameraX, pixelY - cameraY , w, h);
+        g.drawImage(this.icon, pixelX - cameraX, pixelY - cameraY, null);
     }
 
 }

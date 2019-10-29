@@ -25,7 +25,7 @@ public class MouseMove extends Mouse implements MouseMotionListener {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-
+        //TODO: This is where block selection goes
     }
 
     public int getX() {

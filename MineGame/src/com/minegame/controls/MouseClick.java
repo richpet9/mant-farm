@@ -1,6 +1,7 @@
 package com.minegame.controls;
 
 import com.minegame.core.Game;
+import com.minegame.core.HUD;
 import com.minegame.core.Handler;
 import com.minegame.gui.*;
 import com.minegame.world.Cell;
@@ -13,11 +14,13 @@ import java.awt.event.MouseListener;
  */
 public class MouseClick extends Mouse implements MouseListener {
     private Menu menu;
+    private HUD hud;
 
-    public MouseClick(Handler handler, Menu menu) {
+    public MouseClick(Handler handler, Menu menu, HUD hud) {
         super(handler);
 
         this.menu = menu;
+        this.hud = hud;
     }
 
     @Override
@@ -42,12 +45,20 @@ public class MouseClick extends Mouse implements MouseListener {
                 }
                 break;
             case PLAYING:
-                handler.handleClick(mouseX, mouseY, mouseCellX, mouseCellY);
+                boolean onHUD = false;
+                for(Button button : hud.getButtons()) {
+                    if(mouseOverXY(button.getX(), button.getY() - button.getH(), button.getW(), button.getH())) {
+                        button.click();
+                        onHUD = true;
+                    }
+                }
+                if(!onHUD) {
+                    handler.handleClick(mouseX, mouseY, mouseCellX, mouseCellY);
+                }
                 break;
             case GAMEOVER:
                 break;
             case PAUSE:
-                break;
         }
     }
 

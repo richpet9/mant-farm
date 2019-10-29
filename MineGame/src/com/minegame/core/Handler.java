@@ -14,10 +14,11 @@ import java.util.ArrayList;
  * GameObject and telling them when to tick() and render()
  */
 public class Handler {
-    private ArrayList<Cell> cells;                                          //Big array of cells
+    private ArrayList<Cell> cells;                                 //Big array of cells
     private ArrayList<GameObject> objects = new ArrayList<GameObject>();    //All other GameObjects
     private Camera camera;
     private World world;
+    private String clickMode = "SPAWN";
     private boolean worldGenerated = false;
 
     public Handler(World world) {
@@ -59,7 +60,7 @@ public class Handler {
     public void render(Graphics2D g) {
         if(worldGenerated) {
             //Background, sky, if you would
-            g.setColor(new Color(0xAFF1FF));
+            g.setColor(new Color(0xD6AF8D));
             g.fillRect(0, 0, world.getWidth(), world.getHeight());
             //Render every cell
             for(Cell cell : cells) {
@@ -82,6 +83,10 @@ public class Handler {
 
     public void setCamera(Camera camera) {
         this.camera = camera;
+    }
+
+    public void setClickMode(String s) {
+        this.clickMode = s;
     }
 
     public void addObject(GameObject obj) {
@@ -113,7 +118,14 @@ public class Handler {
         //we convert it here
         int trueX = cellX + (camera.getX() / Cell.CELL_WIDTH);
         int trueY = cellY + (camera.getY() / Cell.CELL_HEIGHT);
-        addObject(new Mant(trueX, trueY, Color.WHITE));
+
+        switch(clickMode) {
+            case "SPAWN":
+                addObject(new Mant(trueX, trueY, Color.WHITE));
+                break;
+            case "MINE":
+//                world.getCell(trueX, trueY);
+        }
     }
 
     public void checkCollision(GameObject object) {
