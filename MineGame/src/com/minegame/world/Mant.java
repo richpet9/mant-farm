@@ -3,6 +3,9 @@ package com.minegame.world;
 import com.minegame.core.Game;
 import com.minegame.core.GameID;
 import com.minegame.core.GameObject;
+import com.minegame.exceptions.NullSpriteException;
+import com.minegame.gui.ImageLoader;
+import com.minegame.gui.Sprite;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +17,8 @@ import java.awt.*;
 public class Mant extends GameObject {
     private static final int MANT_WIDTH = 1;    //IN CELLS
     private static final int MANT_HEIGHT = 2;   //IN CELLS
-    private Image icon;
+    private Sprite icon;
+    private boolean onGround = false;
 
     public Mant(int cellX, int cellY, Color color) {
         this.cellX = cellX;
@@ -27,9 +31,12 @@ public class Mant extends GameObject {
         this.id = GameID.MANT;
         this.usesGravity = true;
         this.usesCollision = true;
-
-        ImageIcon i = new ImageIcon(Game.class.getResource("/resources/icons/mant/mant.png"));
-        this.icon = i.getImage();
+        try {
+            this.icon = ImageLoader.getSprite(this.id);
+        } catch (NullSpriteException e) {
+            e.printStackTrace();
+            System.out.println("Sprite could not be found for object: " + this.id);
+        }
     }
 
     @Override
@@ -44,7 +51,15 @@ public class Mant extends GameObject {
 
     @Override
     public void render(Graphics2D g) {
-        g.drawImage(this.icon, pixelX - cameraX, pixelY - cameraY, null);
+        g.drawImage(icon.getImage(), pixelX - cameraX, pixelY - cameraY, null);
+        g.drawString(cellX + " " + cellY, pixelX - cameraX, pixelY - cameraY - 5);
     }
 
+    public boolean isOnGround() {
+        return onGround;
+    }
+
+    public void setOnGround(boolean onGround) {
+        this.onGround = onGround;
+    }
 }

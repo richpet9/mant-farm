@@ -2,6 +2,8 @@ package com.minegame.data;
 
 import com.minegame.world.Cell;
 
+import java.util.Arrays;
+
 /**
  * The MineQueue stores the blocks marked for mining and serves them
  * to the Mants in the FIFO basis.
@@ -33,7 +35,8 @@ public class MineQueue {
      * Remove the first Cell in the mine queue
      * @return The first cell in the queue
      */
-    public Cell dequeue() {
+    public Cell dequeue() throws NullPointerException {
+        if(isEmpty()) throw new NullPointerException();
         Cell res = mineArr[front];
         front = (front + 1) % mineArr.length;
         size -= 1;
@@ -63,6 +66,29 @@ public class MineQueue {
             front = 0;
             rear = size - 1;
         }
+    }
+
+    /**
+     * Returns true if the size of this queue is greater than 0
+     * @return size == 0
+     */
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    /**
+     * Clears the queue of it's contents. If setNull is true, then it will nullify
+     * all indexes in the array (in Theta-n time)
+     * @param setNull
+     */
+    public void clear(boolean setNull) {
+        if(setNull) {
+            Arrays.fill(mineArr, null);
+        }
+
+        front = -1;
+        rear = -1;
+        size = 0;
     }
 
 }

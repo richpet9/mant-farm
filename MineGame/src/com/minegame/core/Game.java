@@ -4,6 +4,7 @@ import com.minegame.controls.KeyInput;
 import com.minegame.controls.MouseClick;
 import com.minegame.controls.MouseMove;
 import com.minegame.controls.MouseWheel;
+import com.minegame.gui.ImageLoader;
 import com.minegame.gui.Menu;
 import com.minegame.world.Mant;
 import com.minegame.world.World;
@@ -57,6 +58,7 @@ public class Game extends Canvas implements Runnable {
 
         new Window(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, this);
 
+        loadImages();
         start();
     }
 
@@ -158,9 +160,6 @@ public class Game extends Canvas implements Runnable {
 
     public void changeGamestate(GameState state) {
         Game.GAMESTATE = state;
-        if(state == GameState.PLAYING) {
-            //handler.addObject(testMant);
-        }
     }
 
     public static int clamp(int value, int low, int high) {
@@ -168,6 +167,10 @@ public class Game extends Canvas implements Runnable {
             value = low;
         } else value = Math.min(value, high);
         return value;
+    }
+
+    private void loadImages() {
+        ImageLoader.loadImage(GameID.MANT, "/resources/icons/mant/mant.png");
     }
 
 

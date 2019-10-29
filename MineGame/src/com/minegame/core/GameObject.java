@@ -45,6 +45,8 @@ public abstract class GameObject {
     public void setCellXY(int x, int y) {
         this.cellX = x;
         this.cellY = y;
+        this.pixelX = cellX * Cell.CELL_WIDTH;
+        this.pixelY = cellY * Cell.CELL_HEIGHT;
     }
     public void setPixelXY(int x, int y) {
         this.pixelX = x;
