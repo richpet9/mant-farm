@@ -11,7 +11,7 @@ import java.awt.*;
 public class Cell extends GameObject {
     public static final int CELL_WIDTH = 10;
     public static final int CELL_HEIGHT = 10;
-    public static final int OVERLAY_PADDING = 2;
+    private static final int OVERLAY_PADDING = 2;
     private Element element = Element.AIR;
     private boolean overlay = false;
 
@@ -24,16 +24,12 @@ public class Cell extends GameObject {
         this.h = CELL_HEIGHT;
 
         this.id = GameID.CELL;
+        this.moves = false;
     }
 
     @Override
     public Rectangle getBounds() {
         return new Rectangle(pixelX, pixelY, w, h);
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
     }
 
     @Override

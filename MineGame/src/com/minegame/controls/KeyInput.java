@@ -10,9 +10,9 @@ import java.util.ArrayList;
  * Key Input listener for camera controls
  */
 public class KeyInput implements KeyListener {
+    private static final int SHIFT_MULTIPLE = 10;
     private Handler handler;
     private ArrayList<Integer> keysPressed = new ArrayList<Integer>();
-    private static int SHIFT_MULTIPLE = 10;
 
     public KeyInput(Handler h) {
         this.handler = h;

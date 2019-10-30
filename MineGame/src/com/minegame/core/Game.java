@@ -30,7 +30,6 @@ public class Game extends Canvas implements Runnable {
     private Handler handler;
     private Menu menu;
     private HUD hud;
-    private Mant testMant;
 
     //DEBUG: variables
     private int avgFPS = 0;
@@ -53,8 +52,6 @@ public class Game extends Canvas implements Runnable {
         this.addMouseMotionListener(mouseMoveListener);
         this.addMouseWheelListener(mouseWheelListener);
         this.addKeyListener(keyInput);
-
-        this.testMant = new Mant(50, 7, new Color(0x5BCBEF));
 
         new Window(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, this);
 

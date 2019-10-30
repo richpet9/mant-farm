@@ -34,10 +34,11 @@ public class Handler {
                 //Camera fix pixel shift
                 cell.setCameraXY(camera.getX(), camera.getY());
 
-                //Gravity
+                //If the cells has gravity and isn't in the last row
                 if(cell.falls() && cell.getCellY() != world.getNumY() - 1) {
-                    if(world.getCell(cell.getCellX(), cell.getCellY() + 1).isAir()) {
-                        //TODO: SOME HOW MAKE THIS CELL FALL
+                    Cell cellBelow = world.getCell(cell.getCellX(), cell.getCellY() + 1);
+                    if(cellBelow.isAir()) {
+                        world.swapCells(cell, cellBelow);
                     }
                 }
 
@@ -57,7 +58,7 @@ public class Handler {
 
             //make object fall
             if (object.falls()) {
-                object.setVelY(-5);
+                object.setVelY(object.getVelY() + -0.2);
             }
 
             //If this object is a MANT
@@ -69,10 +70,10 @@ public class Handler {
                     Cell cellToSeek = mineQueue.peek();
                     //If this cell is to the right
                     if (object.getCellX() < cellToSeek.getCellX()) {
-                        mant.setVelX(2.0);
+                        mant.setVelX(2);
                     } else if (object.getCellX() > cellToSeek.getCellX()) {
                         //Cell is to the left
-                        mant.setVelX(-2.0);
+                        mant.setVelX(-2);
                     } else {
                         mant.setVelX(0);
                         mineQueue.dequeue().setElement(Element.AIR);
@@ -80,11 +81,6 @@ public class Handler {
                 } else {
                     mant.setVelX(0);
                 }
-            }
-
-            //Check collisions
-            if (object.collides()) {
-                checkCellCollision(object);
             }
 
             //Tick the object itself
@@ -104,7 +100,8 @@ public class Handler {
         }
 
         //Render every game object
-        for (GameObject object : objects) {
+        for (int i = 0; i < objects.size(); i++) {
+            GameObject object = objects.get(i);
             object.render(g);
         }
     }
@@ -165,69 +162,18 @@ public class Handler {
         int trueX = cellX + (camera.getX() / Cell.CELL_WIDTH);
         int trueY = cellY + (camera.getY() / Cell.CELL_HEIGHT);
 
-        switch(clickMode) {
+        switch (clickMode) {
             case "SPAWN":
                 //Add a mant to the map
-                addObject(new Mant(trueX, trueY, Color.WHITE));
+                addObject(new Mant(world, trueX, trueY, Color.WHITE));
                 break;
             case "MINE":
                 //Queue up the clicked cell for digging
                 mineQueue.enqueue(world.getCell(trueX, trueY));
                 world.getCell(trueX, trueY).setOverlay(true);
+                break;
+            case "DIRT":
+                world.getCell(trueX, trueY).setElement(Element.DIRT);
         }
     }
-
-    /**
-     * Check if objects are colliding with anything else
-     * @param object The object to check collision of
-     */
-    private void checkCellCollision(GameObject object) {
-        int cellWidth = object.getW() / Cell.CELL_WIDTH;
-        int cellHeight = object.getH() / Cell.CELL_HEIGHT;
-        int newX = object.getPixelX() - (int) object.getVelX();
-        int newY = object.getPixelY() - (int) object.getVelY();
-
-        if(object.getVelX() != 0) {
-            //Object is moving left or right, so check those tiles collisions
-            for (int i = 0; i < cellHeight; i++) {
-                i = Game.clamp(i, 0, world.getNumX());
-                //For every cell that is vertically inline with us
-                Cell cell = world.getCell(object.getCellX() + ((object.getVelX() > 0) ? cellWidth : -cellWidth), object.getCellY() + i);
-
-                //Rectangle used to represent object is where it will be, so we dont use getBounds()
-                Rectangle boundingRect = new Rectangle(newX, newY, object.getW(), object.getH());
-                if (boundingRect.intersects(cell.getBounds()) && !cell.isAir()) {
-                    if(world.getCell(cell.getCellX(), cell.getCellY() - 1).isAir()) {
-                        //If the cell above the one we are colliding with is air, go there
-                        //TODO: Make this be "climbing"
-                        object.setCellXY(object.getCellX() + ((object.getVelX() > 0) ? cellWidth : -cellWidth), object.getCellY() - 1);
-                    } else {
-                        //Collision
-                        object.setVelX(0);
-                    }
-                }
-            }
-        }
-
-        if(object.getVelY() != 0) {
-            //Object is moving left or right, so check those tiles collisions
-            for (int i = 0; i < Cell.CELL_WIDTH; i++) {
-                i = Game.clamp(i, 0, world.getNumY());
-                //For every cell that is vertically inline with us
-                Cell cell = world.getCell(object.getCellX() + i, object.getCellY() + ((object.getVelY() > 0) ? -cellHeight: 2));
-
-                //Rectangle used to represent object is where it will be, so we dont use getBounds()
-                Rectangle boundingRect = new Rectangle(newX, newY, object.getW(), object.getH());
-                if (boundingRect.intersects(cell.getBounds()) && !cell.isAir()) {
-                    //Collision
-                    if(object.getID() == GameID.MANT) {
-                        Mant mant = (Mant) object;
-                        mant.setOnGround(true);
-                    }
-                    object.setVelY(0);
-                }
-            }
-        }
-    }
-
 }

@@ -15,6 +15,7 @@ public abstract class GameObject {
     protected double velX = 0, velY = 0;
     protected boolean usesGravity = false;
     protected boolean usesCollision = false;
+    protected boolean moves = false;
 
     public GameID getID() { return id; }
     public int getCellY() { return cellY; }
@@ -58,14 +59,12 @@ public abstract class GameObject {
     }
 
     public void tick() {
-        pixelX = pixelX + (int) velX;
-        pixelY = pixelY - (int) velY;
+        if(moves) {
+            pixelX = pixelX + (int) Math.round(velX);
+            pixelY = pixelY - (int) Math.round(velY);
 
-        //If our x pixel value is divisible by ten
-        if((pixelX - cameraX) % Cell.CELL_WIDTH == 0) {
+            //If our x pixel value is divisible by ten
             cellX = pixelX / Cell.CELL_WIDTH;
-        }
-        if((pixelY - cameraY) % Cell.CELL_HEIGHT == 0) {
             cellY = pixelY / Cell.CELL_HEIGHT;
         }
     };

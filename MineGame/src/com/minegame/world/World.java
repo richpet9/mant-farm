@@ -1,12 +1,16 @@
 package com.minegame.world;
 
 import com.minegame.core.Camera;
+import com.minegame.core.Game;
 import com.minegame.core.GameObject;
 import com.minegame.core.Handler;
 
 import java.awt.*;
 import java.util.Random;
 
+/**
+ * World represents the data within the generated world as a two dimensional array of Cells
+ */
 public class World {
     private static int GROUND_LEVEL = 60;           //How many cells from top is the ground level?
     private static int GROUND_LEVEL_NOISE = 3;      //3How many cells of roughness is the ground level?
@@ -28,13 +32,6 @@ public class World {
         this.numY = height / Cell.CELL_HEIGHT;
 
         this.cells = new Cell[numX][numY];
-    }
-
-    public void tick() {
-
-    }
-
-    public void render(Graphics2D g) {
     }
 
     private void createLand() {
@@ -180,48 +177,54 @@ public class World {
                 break;
         }
 
-        sizeLoop: while(size > 0 && !currCell.isAir()) {
+        //TODO: Remove this safety, make it work
+        // so sometimes this loop goes on forever, and I haven't been able to pinpoint why yet
+        // for now this works.
+        int safety = 0;
+        while (size > 0 && safety < 100) {
             int x = currCell.getCellX();
             int y = currCell.getCellY();
 
-            switch(rand.nextInt(4)) {
+            switch (rand.nextInt(4)) {
                 case 0:
                     //Spread north
-                    if(cells[x][y - 1].getElement() != element) {
-                        cells[x][y - 1].setElement(element);
-                        currCell = cells[x][y - 1];
-                        size -=1;
+                    y = Game.clamp(y - 1, 0, numY - 1);
+                    if (cells[x][y].getElement() != element) {
+                        cells[x][y].setElement(element);
+                        currCell = cells[x][y];
+                        size -= 1;
                         continue;
                     }
+                    safety += 1;
                 case 1:
-                    if(x == numX - 1) break;
                     //Spread east
-                    if(cells[x + 1][y].getElement() != element) {
-                        cells[x + 1][y].setElement(element);
-                        currCell = cells[x + 1][y];
+                    x = Game.clamp(x + 1, 0, numX - 1);
+                    if (cells[x][y].getElement() != element) {
+                        cells[x][y].setElement(element);
+                        currCell = cells[x][y];
                         size -= 1;
                         continue;
                     }
+                    safety += 1;
                 case 2:
-                    if(y == numY - 1) break;
                     //Spread south
-                    if(cells[x][y + 1].getElement() != element) {
-                        cells[x][y + 1].setElement(element);
-                        currCell = cells[x][y + 1];
+                    y = Game.clamp(y + 1, 0, numY - 1);
+                    if (cells[x][y].getElement() != element) {
+                        cells[x][y].setElement(element);
+                        currCell = cells[x][y];
                         size -= 1;
                         continue;
                     }
+                    safety += 1;
                 case 3:
-                    if(x == 0) break;
                     //Spread west
-                    if(cells[x - 1][y].getElement() != element) {
-                        cells[x - 1][y].setElement(element);
-                        currCell = cells[x - 1][y];
+                    x = Game.clamp(x - 1, 0, numX - 1);
+                    if (cells[x][y].getElement() != element) {
+                        cells[x][y].setElement(element);
+                        currCell = cells[x][y];
                         size -= 1;
-                        continue;
                     }
-                default:
-                    break sizeLoop;
+                    safety += 1;
             }
         }
     }

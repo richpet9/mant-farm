@@ -4,6 +4,9 @@ import com.minegame.core.GameID;
 
 import java.awt.*;
 
+/**
+ * A sprite which can be assigned to any GameObject
+ */
 public class Sprite {
     private GameID id;
     private Image image;

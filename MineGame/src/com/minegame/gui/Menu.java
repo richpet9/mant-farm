@@ -29,6 +29,12 @@ public class Menu extends Canvas {
                 game.changeGamestate(GameState.PLAYING);
             }
         });
+        buttons.add(new Button("Exit", 200, 400, Color.WHITE) {
+            @Override
+            public void click() {
+                System.exit(0);
+            }
+        });
     }
 
     public ArrayList<Button> getButtons() { return buttons; }
