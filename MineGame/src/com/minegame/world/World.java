@@ -6,6 +6,7 @@ import com.minegame.core.GameObject;
 import com.minegame.core.Handler;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -325,5 +326,52 @@ public class World {
 
         a.setCellXY(b.getCellX(), b.getCellY());
         b.setCellXY(aX, aY);
+    }
+
+    public ArrayList<Cell> getNeighbors(Cell cell) {
+        //ArrayList to return
+        ArrayList<Cell> res = new ArrayList<Cell>();
+        //The location of queried cell
+        int cellX = cell.getCellX();
+        int cellY = cell.getCellY();
+
+        //Loop through the neighbors by getting +/- 1 in both directions
+        for(int x = cellX - 1; x < cellX + 1; x++ ) {
+            for(int y = cellY - 1; y < cellY + 1; y++) {
+                //Clamp our values
+                int newX = Game.clamp(x, 0, numX - 1);
+                int newY = Game.clamp(y, 0, numY - 1);
+
+                //Make sure we aren't on the center cell
+                if(newX != cellX && newY != cellY) {
+                    Cell cellToAdd = cells[newX][newY];
+                    res.add(cellToAdd);
+                }
+            }
+        }
+
+        return res;
+    }
+
+    public ArrayList<Cell> getNeighbors(int cellX, int cellY) {
+        //ArrayList to return
+        ArrayList<Cell> res = new ArrayList<Cell>();
+
+        //Loop through the neighbors by getting +/- 1 in both directions
+        for(int x = cellX - 1; x <= cellX + 1; x++ ) {
+            for(int y = cellY - 1; y <= cellY + 1; y++) {
+                //Clamp our values
+                int newX = Game.clamp(x, 0, numX - 1);
+                int newY = Game.clamp(y, 0, numY - 1);
+
+                //Make sure we aren't on the center cell
+                if(newX != cellX || newY != cellY) {
+                    Cell cellToAdd = cells[newX][newY];
+                    res.add(cellToAdd);
+                }
+            }
+        }
+
+        return res;
     }
 }

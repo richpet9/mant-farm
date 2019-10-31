@@ -1,10 +1,7 @@
 package com.minegame.core;
 
-import com.minegame.data.MineQueue;
-import com.minegame.world.Cell;
-import com.minegame.world.Element;
-import com.minegame.world.Mant;
-import com.minegame.world.World;
+import com.minegame.data.CellQueue;
+import com.minegame.world.*;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -19,13 +16,15 @@ public class Handler {
     private ArrayList<GameObject> objects = new ArrayList<GameObject>();    //All other GameObjects
     private Camera camera;
     private World world;
-    private MineQueue mineQueue;
+    private CellQueue mineQueue;
+    private CellQueue nonReachableJobs;
     private String clickMode = "SPAWN";
     private boolean worldGenerated = false;
 
     public Handler(World world) {
         this.world = world;
-        this.mineQueue = new MineQueue(100);
+        this.mineQueue = new CellQueue(100);
+        this.nonReachableJobs = new CellQueue(50);
     }
 
     public void tick() {
@@ -41,9 +40,6 @@ public class Handler {
                         world.swapCells(cell, cellBelow);
                     }
                 }
-
-                //TODO: This is for debugging & the clear queue button
-                if(mineQueue.isEmpty() && cell.isOverlayOn()) cell.setOverlay(false);
 
                 //Tick the cell
                 cell.tick();
@@ -64,22 +60,13 @@ public class Handler {
             //If this object is a MANT
             if (object.getID() == GameID.MANT) {
                 Mant mant = (Mant) object;
-                //TODO: This logic probably shouldn't be here and DEFINITELY needs to be reworked
-                //If the minequeue isn't empty, get this mant to that cell
-                if (!mineQueue.isEmpty()) {
-                    Cell cellToSeek = mineQueue.peek();
-                    //If this cell is to the right
-                    if (object.getCellX() < cellToSeek.getCellX()) {
-                        mant.setVelX(2);
-                    } else if (object.getCellX() > cellToSeek.getCellX()) {
-                        //Cell is to the left
-                        mant.setVelX(-2);
-                    } else {
-                        mant.setVelX(0);
-                        mineQueue.dequeue().setElement(Element.AIR);
-                    }
-                } else {
-                    mant.setVelX(0);
+                //If the minequeue isn't empty, and this mant isn't assigned a cell already
+                if (!mineQueue.isEmpty() && mant.getTargetCell() == null) {
+                    //TODO: ADD this cell to a IN-ACTION array and maybe create classes for jobs
+                    // then we could have "on complete" "on start" "duration" and "work" etc.
+                    Cell cellToSeek = mineQueue.dequeue();
+                    mant.setTargetCell(cellToSeek);
+                    cellToSeek.setOverlay(true);
                 }
             }
 
@@ -112,14 +99,13 @@ public class Handler {
     public Camera getCamera() {
         return camera;
     }
-    public MineQueue getMineQueue() {
+    public CellQueue getMineQueue() {
         return mineQueue;
     }
 
     public void setCamera(Camera camera) {
         this.camera = camera;
     }
-
     public void setClickMode(String s) {
         this.clickMode = s;
     }
@@ -127,7 +113,6 @@ public class Handler {
     public void addObject(GameObject obj) {
         objects.add(obj);
     }
-
     public void removeObject(GameObject obj) {
         objects.remove(obj);
     }
@@ -147,6 +132,9 @@ public class Handler {
         }
 
         worldGenerated = true;
+        objects.add(new Chunk(world, Element.IRON, 10, 50));
+        objects.add(new Chunk(world, Element.COPPER, 12, 51));
+        objects.add(new Chunk(world, Element.GOLD, 14, 51));
     }
 
     /**

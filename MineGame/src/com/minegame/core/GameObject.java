@@ -29,7 +29,6 @@ public abstract class GameObject {
     public double getVelX() { return velX; }
     public double getVelY() { return velY; }
     public boolean falls() {return usesGravity; }
-    public boolean collides() {return usesCollision; }
 
     public void setID(GameID id) { this.id = id; }
     public void setCellX(int cellX) { this.cellX = cellX; }

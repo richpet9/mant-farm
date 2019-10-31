@@ -5,16 +5,16 @@ import com.minegame.world.Cell;
 import java.util.Arrays;
 
 /**
- * The MineQueue stores the blocks marked for mining and serves them
- * to the Mants in the FIFO basis.
+ * The CellQueue stores the cells and serves them
+ * in the FIFO basis.
  */
-public class MineQueue {
+public class CellQueue {
     private Cell[] mineArr;
     private int rear = -1;
     private int front = -1;
     private int size = 0;
 
-    public MineQueue(int initSize) {
+    public CellQueue(int initSize) {
         this.mineArr = new Cell[initSize];
     }
 

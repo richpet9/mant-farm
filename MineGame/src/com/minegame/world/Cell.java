@@ -68,6 +68,7 @@ public class Cell extends GameObject {
         this.element = element;
         usesGravity = element != Element.AIR;
     }
+
     public void setOverlay(boolean overlay) {
         this.overlay = overlay;
     }
@@ -75,5 +76,4 @@ public class Cell extends GameObject {
     public boolean isAir() {
         return element == Element.AIR;
     }
-
 }

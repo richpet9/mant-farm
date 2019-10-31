@@ -1,11 +1,11 @@
 package com.minegame.tests;
 
-import com.minegame.data.MineQueue;
+import com.minegame.data.CellQueue;
 import com.minegame.world.Cell;
 
 public class MineQueueTest {
     public static void main(String[] args) {
-        MineQueue q = new MineQueue(4);
+        CellQueue q = new CellQueue(4);
 
         //Empty Queue
         System.out.println("\nEmpty Queue:");

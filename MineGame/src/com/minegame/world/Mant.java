@@ -17,6 +17,7 @@ public class Mant extends GameObject {
     private static final int MANT_WIDTH = 1;    //IN CELLS
     private static final int MANT_HEIGHT = 2;   //IN CELLS
     private World world;
+    private Cell targetCell;                    //If targetCell exists, this Mant will try to get there
     private Sprite icon;
     private boolean onGround = false;
     private boolean climbing = false;
@@ -26,7 +27,7 @@ public class Mant extends GameObject {
         this.world = world;
         this.cellX = cellX;
         this.cellY = cellY;
-        this.pixelX = (cellX * Cell.CELL_WIDTH);
+        this.pixelX = cellX * Cell.CELL_WIDTH;
         this.pixelY = cellY * Cell.CELL_HEIGHT;
         this.w = Cell.CELL_WIDTH * MANT_WIDTH;
         this.h = Cell.CELL_HEIGHT * MANT_HEIGHT;
@@ -51,6 +52,27 @@ public class Mant extends GameObject {
 
     @Override
     public void tick() {
+        if(targetCell != null) {
+            Rectangle bounds = targetCell.getBounds();
+
+            if(pixelX > bounds.x + bounds.width) {
+                //target cell is to the left
+                velX = -2;
+            } else if(pixelX < bounds.x) {
+                //target cell is to the right
+                velX = 2;
+            } else {
+                velX = 0;
+                //We are at target cell in x plane
+                if(cellY < (targetCell.getCellY() + MANT_HEIGHT + 1) && cellY > (targetCell.getCellY() - MANT_HEIGHT - 1)) {
+                    //We can act upon the target cell
+                    targetCell.setElement(Element.AIR);
+                    targetCell.setOverlay(false);
+                    targetCell = null;
+                }
+            }
+        }
+
         if(climbing) {
             //If our current Y pos is one tile up, plus 3 pixels
             if(pixelY <= (climbingFromPixelY - Cell.CELL_HEIGHT)) {
@@ -66,12 +88,14 @@ public class Mant extends GameObject {
 
         checkCollisions();
 
+
         super.tick();
     }
 
     @Override
     public void render(Graphics2D g) {
         g.drawImage(icon.getImage(), pixelX - cameraX, pixelY - cameraY, null);
+        g.setColor(Color.WHITE);
         g.drawString("c: " + cellX + " " + cellY, pixelX - cameraX, pixelY - cameraY - 5);
         g.drawString("p: " + pixelX + " " + pixelY, pixelX - cameraX, pixelY - cameraY - 20);
     }
@@ -142,12 +166,20 @@ public class Mant extends GameObject {
         }
     }
 
+    public Cell getTargetCell() {
+        return targetCell;
+    }
+
     public boolean isOnGround() {
         return onGround;
     }
 
     public boolean isClimbing() {
         return climbing;
+    }
+
+    public void setTargetCell(Cell targetCell) {
+        this.targetCell = targetCell;
     }
 
     public void setOnGround(boolean onGround) {
