@@ -23,6 +23,8 @@ public class Mant extends GameObject {
     private boolean onGround = false;
     private boolean climbing = false;
     private boolean working = false;
+    private int failedJobCooldown = 3;           //In seconds
+    private long arrivalTime = -1;
     private int climbingFromPixelY = -1;
 
     public Mant(World world, int cellX, int cellY, Color color) {
@@ -68,12 +70,16 @@ public class Mant extends GameObject {
             } else {
                 //We are at target cell in x plane
                 velX = 0;
+                if(arrivalTime == -1) arrivalTime = System.nanoTime();
                 //If our Y cell location is one +/- our height away from the target cell, we can work the job
                 if(cellY < (targetCell.getCellY() + MANT_HEIGHT + 1) && cellY > (targetCell.getCellY() - MANT_HEIGHT - 1)) {
                     job.work();
                 } else {
-                    //TODO: Add job cooldown before setting it to complete
-                    job.setComplete(true);
+                    long elapsedTime = (System.nanoTime() - arrivalTime) / (long) 1E9;
+                    if(elapsedTime > failedJobCooldown) {
+                        job.setComplete(true);
+                        arrivalTime = -1;
+                    }
                 }
             }
         }

@@ -18,6 +18,7 @@ public abstract class GameObject {
     protected boolean usesCollision = false;
     protected boolean moves = false;
 
+    //Getters
     public GameID getID() { return id; }
     public int getCellY() { return cellY; }
     public int getCellX() { return cellX; }
@@ -31,6 +32,7 @@ public abstract class GameObject {
     public double getVelY() { return velY; }
     public boolean falls() {return usesGravity; }
 
+    //Setters
     public void setID(GameID id) { this.id = id; }
     public void setCellX(int cellX) { this.cellX = cellX; }
     public void setCellY(int cellY) { this.cellY = cellY; }

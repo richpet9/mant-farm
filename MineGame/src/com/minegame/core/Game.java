@@ -33,6 +33,8 @@ public class Game extends Canvas implements Runnable {
 
     //DEBUG: variables
     private int avgFPS = 0;
+    private int memoryCooldown = 60;
+    private double freeMemory;
 
     private Game() {
         World world = new World(VIEWPORT_WIDTH * 4, VIEWPORT_HEIGHT * 4);
@@ -116,6 +118,15 @@ public class Game extends Canvas implements Runnable {
 
     private void tick() {
         handler.tick();
+
+        memoryCooldown--;
+        if(memoryCooldown <= 0) {
+            double newFreeMemory = (double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024;
+            double deltaFree = newFreeMemory - freeMemory;
+            freeMemory = newFreeMemory;
+            System.out.println("KB Used: " + freeMemory + "\t\t Delta FreeKB: " + deltaFree);
+            memoryCooldown = 60;
+        }
     }
 
     private void render() {

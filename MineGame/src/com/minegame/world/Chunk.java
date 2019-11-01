@@ -1,6 +1,7 @@
 package com.minegame.world;
 
 import com.minegame.core.Game;
+import com.minegame.core.GameID;
 import com.minegame.core.GameObject;
 
 import java.awt.*;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 public class Chunk extends GameObject {
     private Element element;
     private World world;
+    private int fallDelay = 10;
 
     public Chunk(World world, Element element, int cellX, int cellY) {
         this.element = element;
@@ -16,12 +18,11 @@ public class Chunk extends GameObject {
         this.cellY = cellY;
         this.pixelX = cellX * Cell.CELL_WIDTH;
         this.pixelY = cellY * Cell.CELL_HEIGHT;
-        this.w = Cell.CELL_WIDTH - 2;
-        this.h = Cell.CELL_HEIGHT - 2;
+        this.w = Cell.CELL_WIDTH;
+        this.h = Cell.CELL_HEIGHT;
+        this.id = GameID.CHUNK;
 
         this.world = world;
-        this.moves = true;
-        this.usesGravity = true;
     }
 
     @Override
@@ -57,20 +58,104 @@ public class Chunk extends GameObject {
     }
 
     private void checkCollisions() {
-        int newX = pixelX + (int) Math.round(velX);
-        int newY = pixelY - (int) Math.round(velY);
-        Rectangle newRect = new Rectangle(newX, newY, w, h);
+        //Get the cell below us
+        int neighborY = Game.clamp(cellY + 1, 0, world.getNumY() - 1);
+        int neighborX = Game.clamp(cellX, 0, world.getNumX() - 1);
+        Cell neighbor = world.getCell(neighborX, neighborY);
 
-        //Not gonna lie this collision algorithm is slick
-        if(velY != 0 || velX != 0) {
-            //Chunk is moving
-            ArrayList<Cell> neighbors = world.getNeighbors(cellX, cellY);
+        if(neighbor.isAir() && !neighbor.hasChunk()) {
+            fallDelay--;
+            if(fallDelay <= 0) {
+                world.getCell(cellX, cellY).setHasChunk(false);
+                cellX = neighborX;
+                cellY = neighborY;
+                pixelX = cellX * Cell.CELL_WIDTH;
+                pixelY = cellY * Cell.CELL_HEIGHT;
 
-            for(Cell cell : neighbors) {
-                if(newRect.intersects(cell.getBounds()) && (!cell.isAir() || cell.hasChunk())) {
-                    //Collision
-                    if(velX != 0) velX = 0;
-                    if(velY != 0) velY = 0;
+                neighbor.setHasChunk(true);
+
+                fallDelay = 30;
+            }
+            return;
+        }
+
+        //50/50 chance of checking left or right first
+        if(Math.random() < 0.5) {
+            //Check bottom left cell
+            neighborY = Game.clamp(cellY + 1, 0, world.getNumY() - 1);
+            neighborX = Game.clamp(cellX - 1, 0, world.getNumX() - 1);
+            neighbor = world.getCell(neighborX, neighborY);
+
+            if(neighbor.isAir() && !neighbor.hasChunk()) {
+                fallDelay--;
+                if(fallDelay <= 0) {
+                    world.getCell(cellX, cellY).setHasChunk(false);
+                    cellX = neighborX;
+                    cellY = neighborY;
+                    pixelX = cellX * Cell.CELL_WIDTH;
+                    pixelY = cellY * Cell.CELL_HEIGHT;
+
+                    neighbor.setHasChunk(true);
+
+                    fallDelay = 10;
+                }
+            }
+            //Check bottom right cell
+            neighborY = Game.clamp(cellY + 1, 0, world.getNumY() - 1);
+            neighborX = Game.clamp(cellX + 1, 0, world.getNumX() - 1);
+            neighbor = world.getCell(neighborX, neighborY);
+
+            if(neighbor.isAir() && !neighbor.hasChunk()) {
+                fallDelay--;
+                if(fallDelay <= 0) {
+                    world.getCell(cellX, cellY).setHasChunk(false);
+                    cellX = neighborX;
+                    cellY = neighborY;
+                    pixelX = cellX * Cell.CELL_WIDTH;
+                    pixelY = cellY * Cell.CELL_HEIGHT;
+
+                    neighbor.setHasChunk(true);
+
+                    fallDelay = 60;
+                }
+            }
+        } else {
+            //Check bottom left cell
+            neighborY = Game.clamp(cellY + 1, 0, world.getNumY() - 1);
+            neighborX = Game.clamp(cellX - 1, 0, world.getNumX() - 1);
+            neighbor = world.getCell(neighborX, neighborY);
+
+            if(neighbor.isAir() && !neighbor.hasChunk()) {
+                fallDelay--;
+                if(fallDelay <= 0) {
+                    world.getCell(cellX, cellY).setHasChunk(false);
+                    cellX = neighborX;
+                    cellY = neighborY;
+                    pixelX = cellX * Cell.CELL_WIDTH;
+                    pixelY = cellY * Cell.CELL_HEIGHT;
+
+                    neighbor.setHasChunk(true);
+
+                    fallDelay = 10;
+                }
+            }
+            //Check bottom right cell
+            neighborY = Game.clamp(cellY + 1, 0, world.getNumY() - 1);
+            neighborX = Game.clamp(cellX + 1, 0, world.getNumX() - 1);
+            neighbor = world.getCell(neighborX, neighborY);
+
+            if(neighbor.isAir() && !neighbor.hasChunk()) {
+                fallDelay--;
+                if(fallDelay <= 0) {
+                    world.getCell(cellX, cellY).setHasChunk(false);
+                    cellX = neighborX;
+                    cellY = neighborY;
+                    pixelX = cellX * Cell.CELL_WIDTH;
+                    pixelY = cellY * Cell.CELL_HEIGHT;
+
+                    neighbor.setHasChunk(true);
+
+                    fallDelay = 60;
                 }
             }
         }

@@ -6,7 +6,7 @@ import com.minegame.core.GameObject;
 import java.awt.*;
 
 /**
- * A Cell, represents the map grid
+ * A Cell, represents the map grid areas
  */
 public class Cell extends GameObject {
     public static final int CELL_WIDTH = 10;

@@ -10,10 +10,10 @@ public abstract class Job {
     protected JobID id;
     protected Cell targetCell;
     protected int duration;     //In Seconds
-    protected long startTime = -1;    //for calculating durations
     protected Mant worker;
     protected boolean dequeue;  //Flag for dequeueing
     protected boolean complete; //Flag for removing from memory
+    protected long startTime = -1;    //for calculating durations
 
     abstract void onAssigned();
     abstract void onComplete(boolean success);

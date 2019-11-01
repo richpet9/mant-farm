@@ -40,8 +40,8 @@ public class Handler {
                 if(cell.dropChunk() != null) {
                     Chunk newChunk = new Chunk(world, cell.dropChunk(), cell.cellX, cell.getCellY());
                     addObject(newChunk);
-                    cell.setHasChunk(true);
                     cell.setDropChunk(null);
+                    cell.setHasChunk(true);
                 }
 
                 //Tick the cell
@@ -145,8 +145,6 @@ public class Handler {
 
         worldGenerated = true;
         objects.add(new Chunk(world, Element.IRON, 10, 50));
-        objects.add(new Chunk(world, Element.COPPER, 12, 51));
-        objects.add(new Chunk(world, Element.GOLD, 14, 51));
     }
 
     /**
@@ -159,13 +157,16 @@ public class Handler {
     public void handleClick(int pixelX, int pixelY, int cellX, int cellY) {
         //MouseListener doesn't have access to the camera, so it sends us
         //we convert it here
-        int trueX = cellX + (camera.getX() / Cell.CELL_WIDTH);
-        int trueY = cellY + (camera.getY() / Cell.CELL_HEIGHT);
+        int trueX = (pixelX + camera.getX()) / Cell.CELL_WIDTH;
+        int trueY = (pixelY + camera.getY()) / Cell.CELL_HEIGHT;
 
         switch (clickMode) {
             case "SPAWN":
                 //Add a mant to the map
-                addObject(new Mant(world, trueX, trueY, Color.WHITE));
+                if(world.getCell(trueX, trueY).isAir() && world.getCell(trueX, trueY + 1).isAir()) {
+                    //If the cell we clicked and one below it is air
+                    addObject(new Mant(world, trueX, trueY, Color.WHITE));
+                }
                 break;
             case "MINE":
                 //Queue up the clicked cell for digging
