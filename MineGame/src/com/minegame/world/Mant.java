@@ -3,6 +3,7 @@ package com.minegame.world;
 import com.minegame.core.Game;
 import com.minegame.core.GameID;
 import com.minegame.core.GameObject;
+import com.minegame.data.Job;
 import com.minegame.exceptions.NullSpriteException;
 import com.minegame.gui.ImageLoader;
 import com.minegame.gui.Sprite;
@@ -17,10 +18,11 @@ public class Mant extends GameObject {
     private static final int MANT_WIDTH = 1;    //IN CELLS
     private static final int MANT_HEIGHT = 2;   //IN CELLS
     private World world;
-    private Cell targetCell;                    //If targetCell exists, this Mant will try to get there
+    private Job job;
     private Sprite icon;
     private boolean onGround = false;
     private boolean climbing = false;
+    private boolean working = false;
     private int climbingFromPixelY = -1;
 
     public Mant(World world, int cellX, int cellY, Color color) {
@@ -52,23 +54,26 @@ public class Mant extends GameObject {
 
     @Override
     public void tick() {
-        if(targetCell != null) {
+        if(job != null) {
+            Cell targetCell = job.getTargetCell();
             Rectangle bounds = targetCell.getBounds();
 
+            //If our left side is greater than the left side of the target cell
             if(pixelX > bounds.x + bounds.width) {
                 //target cell is to the left
                 velX = -2;
-            } else if(pixelX < bounds.x) {
+            } else if(pixelX + w < bounds.x) {  //If our right side is less than the right side of the target cell
                 //target cell is to the right
                 velX = 2;
             } else {
-                velX = 0;
                 //We are at target cell in x plane
+                velX = 0;
+                //If our Y cell location is one +/- our height away from the target cell, we can work the job
                 if(cellY < (targetCell.getCellY() + MANT_HEIGHT + 1) && cellY > (targetCell.getCellY() - MANT_HEIGHT - 1)) {
-                    //We can act upon the target cell
-                    targetCell.setElement(Element.AIR);
-                    targetCell.setOverlay(false);
-                    targetCell = null;
+                    job.work();
+                } else {
+                    //TODO: Add job cooldown before setting it to complete
+                    job.setComplete(true);
                 }
             }
         }
@@ -98,6 +103,13 @@ public class Mant extends GameObject {
         g.setColor(Color.WHITE);
         g.drawString("c: " + cellX + " " + cellY, pixelX - cameraX, pixelY - cameraY - 5);
         g.drawString("p: " + pixelX + " " + pixelY, pixelX - cameraX, pixelY - cameraY - 20);
+        if(job != null) {
+            g.setColor(Color.RED);
+            g.drawString("Has Job!", pixelX - cameraX, pixelY - cameraY - 35);
+            if(working) {
+                g.drawString("WORKING", pixelX - cameraX, pixelY - cameraY - 50);
+            }
+        }
     }
 
     private void checkCollisions() {
@@ -166,29 +178,34 @@ public class Mant extends GameObject {
         }
     }
 
-    public Cell getTargetCell() {
-        return targetCell;
+    //Getters
+    public Job getJob() {
+        return job;
     }
-
     public boolean isOnGround() {
         return onGround;
     }
-
     public boolean isClimbing() {
         return climbing;
     }
-
-    public void setTargetCell(Cell targetCell) {
-        this.targetCell = targetCell;
+    public boolean isWorking() {
+        return working;
     }
 
+    //Setters
+    public void setJob(Job job) {
+        this.job = job;
+        //If we are assigning a job, set the worker to this guy
+        if(job != null) this.job.setWorker(this);
+    }
     public void setOnGround(boolean onGround) {
         this.onGround = onGround;
     }
-
     public void setClimbing(boolean climbing) {
         this.climbing = climbing;
         climbingFromPixelY = pixelY;
     }
-
+    public void setWorking(boolean working) {
+        this.working = working;
+    }
 }

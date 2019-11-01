@@ -1,31 +1,29 @@
 package com.minegame.data;
 
-import com.minegame.world.Cell;
-
 import java.util.Arrays;
 
 /**
  * The CellQueue stores the cells and serves them
  * in the FIFO basis.
  */
-public class CellQueue {
-    private Cell[] mineArr;
+public class JobQueue {
+    private Job[] jobs;
     private int rear = -1;
     private int front = -1;
     private int size = 0;
 
-    public CellQueue(int initSize) {
-        this.mineArr = new Cell[initSize];
+    public JobQueue(int initSize) {
+        this.jobs = new Job[initSize];
     }
 
     /**
      * Insert a Cell into the mine queue
-     * @param cell The cell to insert
+     * @param job The job to insert
      */
-    public void enqueue(Cell cell) {
+    public void enqueue(Job job) {
         ensureCapacity();
-        rear = (rear + 1) % mineArr.length;
-        mineArr[rear] = cell;
+        rear = (rear + 1) % jobs.length;
+        jobs[rear] = job;
         size += 1;
 
         if(front < 0) front = 0;
@@ -35,10 +33,10 @@ public class CellQueue {
      * Remove the first Cell in the mine queue
      * @return The first cell in the queue
      */
-    public Cell dequeue() throws NullPointerException {
+    public Job dequeue() throws NullPointerException {
         if(isEmpty()) throw new NullPointerException();
-        Cell res = mineArr[front];
-        front = (front + 1) % mineArr.length;
+        Job res = jobs[front];
+        front = (front + 1) % jobs.length;
         size -= 1;
         return res;
     }
@@ -47,8 +45,8 @@ public class CellQueue {
      * Peek at the first cell of the queue without removing it
      * @return The first cell in the queue
      */
-    public Cell peek() {
-        return mineArr[front];
+    public Job peek() {
+        return jobs[front];
     }
 
     /**
@@ -56,13 +54,13 @@ public class CellQueue {
      */
     private void ensureCapacity() {
         //TODO: Make this thing shrink at size = 1/4 * length also
-        if(size >= mineArr.length) {
+        if(size >= jobs.length) {
             //We must expand
-            Cell[] newArr = new Cell[mineArr.length * 2];
-            System.arraycopy(mineArr, 0, newArr, 0, mineArr.length);
+            Job[] newArr = new Job[jobs.length * 2];
+            System.arraycopy(jobs, 0, newArr, 0, jobs.length);
 
             //Set the new array to the queue array, set front to zero, and rear to the size of the old array
-            mineArr = newArr;
+            jobs = newArr;
             front = 0;
             rear = size - 1;
         }
@@ -73,7 +71,7 @@ public class CellQueue {
      * @return size == 0
      */
     public boolean isEmpty() {
-        return size == 0;
+        return size <= 0;
     }
 
     /**
@@ -83,12 +81,27 @@ public class CellQueue {
      */
     public void clear(boolean setNull) {
         if(setNull) {
-            Arrays.fill(mineArr, null);
+            Arrays.fill(jobs, null);
         }
-
         front = -1;
         rear = -1;
         size = 0;
     }
 
+    /**
+     * Get the size of the queue
+     * @return returns the size of the queue as an integer
+     */
+    public int size() {
+        return size;
+    }
+
+    /**
+     * Get will return the job at the specified index
+     * @param i The index to access, starting from the front of the queue
+     * @return Returns the Job at index
+     */
+    public Job get(int i) {
+        return jobs[front + i];
+    }
 }

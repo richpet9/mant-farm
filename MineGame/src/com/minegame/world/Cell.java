@@ -13,6 +13,8 @@ public class Cell extends GameObject {
     public static final int CELL_HEIGHT = 10;
     private static final int OVERLAY_PADDING = 2;
     private Element element = Element.AIR;
+    private Element dropChunk = null;
+    private boolean hasChunk = false;
     private boolean overlay = false;
 
     public Cell(int pixelX, int pixelY, int cellX, int cellY) {
@@ -52,28 +54,37 @@ public class Cell extends GameObject {
             }
 
             g.fillRect(pixelX - cameraX , pixelY - cameraY , w, h);
+        }
 
-            if(overlay) {
-                g.setColor(Color.WHITE);
-                g.fillRect((pixelX - cameraX) + OVERLAY_PADDING, (pixelY - cameraY) + OVERLAY_PADDING, w - (2 * OVERLAY_PADDING), h - (2* OVERLAY_PADDING));
-            }
+        if(overlay) {
+            g.setColor(Color.WHITE);
+            g.fillRect((pixelX - cameraX) + OVERLAY_PADDING, (pixelY - cameraY) + OVERLAY_PADDING, w - (2 * OVERLAY_PADDING), h - (2* OVERLAY_PADDING));
         }
     }
 
+    //Getters
     public Element getElement() { return element; }
-
+    public Element dropChunk() { return dropChunk; }
     public boolean isOverlayOn() { return overlay; }
+    public boolean hasChunk() {
+        return hasChunk;
+    }
 
+    //Setters
     public void setElement(Element element) {
         this.element = element;
         usesGravity = element != Element.AIR;
     }
-
+    public void setDropChunk(Element chunk) {
+        this.dropChunk = chunk;
+    }
     public void setOverlay(boolean overlay) {
         this.overlay = overlay;
     }
-
     public boolean isAir() {
         return element == Element.AIR;
+    }
+    public void setHasChunk(boolean hasChunk) {
+        this.hasChunk = hasChunk;
     }
 }

@@ -1,11 +1,14 @@
 package com.minegame.core;
 
-import com.minegame.data.CellQueue;
+import com.minegame.data.Job;
+import com.minegame.data.JobQueue;
+import com.minegame.data.MineJob;
 import com.minegame.world.*;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * Handler is the main driving force of the engine, storing each
@@ -14,17 +17,17 @@ import java.util.Arrays;
 public class Handler {
     private ArrayList<Cell> cells;                                 //Big array of cells
     private ArrayList<GameObject> objects = new ArrayList<GameObject>();    //All other GameObjects
+    private JobQueue jobQueue;
+    private ArrayList<Job> inProgressJobs;
     private Camera camera;
     private World world;
-    private CellQueue mineQueue;
-    private CellQueue nonReachableJobs;
     private String clickMode = "SPAWN";
     private boolean worldGenerated = false;
 
     public Handler(World world) {
         this.world = world;
-        this.mineQueue = new CellQueue(100);
-        this.nonReachableJobs = new CellQueue(50);
+        this.jobQueue = new JobQueue(64);
+        this.inProgressJobs = new ArrayList<Job>(64);
     }
 
     public void tick() {
@@ -34,11 +37,11 @@ public class Handler {
                 cell.setCameraXY(camera.getX(), camera.getY());
 
                 //If the cells has gravity and isn't in the last row
-                if(cell.falls() && cell.getCellY() != world.getNumY() - 1) {
-                    Cell cellBelow = world.getCell(cell.getCellX(), cell.getCellY() + 1);
-                    if(cellBelow.isAir()) {
-                        world.swapCells(cell, cellBelow);
-                    }
+                if(cell.dropChunk() != null) {
+                    Chunk newChunk = new Chunk(world, cell.dropChunk(), cell.cellX, cell.getCellY());
+                    addObject(newChunk);
+                    cell.setHasChunk(true);
+                    cell.setDropChunk(null);
                 }
 
                 //Tick the cell
@@ -61,18 +64,21 @@ public class Handler {
             if (object.getID() == GameID.MANT) {
                 Mant mant = (Mant) object;
                 //If the minequeue isn't empty, and this mant isn't assigned a cell already
-                if (!mineQueue.isEmpty() && mant.getTargetCell() == null) {
-                    //TODO: ADD this cell to a IN-ACTION array and maybe create classes for jobs
-                    // then we could have "on complete" "on start" "duration" and "work" etc.
-                    Cell cellToSeek = mineQueue.dequeue();
-                    mant.setTargetCell(cellToSeek);
-                    cellToSeek.setOverlay(true);
+                if(!jobQueue.isEmpty() && mant.getJob() == null) {
+                    //Assign this job to the mant
+                    mant.setJob(jobQueue.peek());
+                    //Add this job to the in-progress jobs
+                    inProgressJobs.add(jobQueue.dequeue());
                 }
             }
 
             //Tick the object itself
             object.tick();
         }
+
+        //For every in progress job
+        //This syntax was made my IntelliJ, how neat
+        inProgressJobs.removeIf(Job::isComplete);
     }
 
     public void render(Graphics2D g) {
@@ -87,22 +93,28 @@ public class Handler {
         }
 
         //Render every game object
+        //TODO: Add Mants in their own list so they can be on top z-level
         for (int i = 0; i < objects.size(); i++) {
             GameObject object = objects.get(i);
             object.render(g);
         }
     }
 
+    //Getters
     public ArrayList<GameObject> getObjects() {
         return objects;
+    }
+    public JobQueue getJobQueue() {
+        return jobQueue;
+    };
+    public ArrayList<Job> getInProgressJobs() {
+        return inProgressJobs;
     }
     public Camera getCamera() {
         return camera;
     }
-    public CellQueue getMineQueue() {
-        return mineQueue;
-    }
 
+    //Setters
     public void setCamera(Camera camera) {
         this.camera = camera;
     }
@@ -157,8 +169,11 @@ public class Handler {
                 break;
             case "MINE":
                 //Queue up the clicked cell for digging
-                mineQueue.enqueue(world.getCell(trueX, trueY));
-                world.getCell(trueX, trueY).setOverlay(true);
+                Cell cell = world.getCell(trueX, trueY);
+                if(cell.isAir()) return;
+
+                jobQueue.enqueue(new MineJob(cell));
+                cell.setOverlay(true);
                 break;
             case "DIRT":
                 world.getCell(trueX, trueY).setElement(Element.DIRT);

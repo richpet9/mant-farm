@@ -146,6 +146,7 @@ public class Game extends Canvas implements Runnable {
         g.drawString("Camera X: " + camera.getX(), 10, 85);
         g.drawString("Camera Y: " + camera.getY(), 10, 105);
         g.drawString("GameObjects: " + handler.getObjects().size(), 10, 125);
+        g.drawString("Jobs: " + (handler.getJobQueue().size() + handler.getInProgressJobs().size()), 10, 145);
 
         hud.render(g);
 

@@ -16,21 +16,21 @@ public class HUD {
         this.game = game;
         this.handler = handler;
 
-        this.clickModeButtons[0] = new Button("MANT", 10, 145, Color.WHITE) {
+        this.clickModeButtons[0] = new Button("MANT", 10, 165, Color.WHITE) {
             @Override
             public void click() {
                 handler.setClickMode("SPAWN");
             }
         };
 
-        this.clickModeButtons[1] = new Button("MINE", 10, 165, Color.WHITE) {
+        this.clickModeButtons[1] = new Button("MINE", 10, 185, Color.WHITE) {
             @Override
             public void click() {
                 handler.setClickMode("MINE");
             }
         };
 
-        this.clickModeButtons[2] = new Button("DIRT", 10, 185, Color.WHITE) {
+        this.clickModeButtons[2] = new Button("DIRT", 10, 205, Color.WHITE) {
             @Override
             public void click() {
                 handler.setClickMode("DIRT");
@@ -38,10 +38,10 @@ public class HUD {
         };
 
 
-        this.clickModeButtons[3] = new Button("CLEAR QUEUE", 10, 205, Color.RED) {
+        this.clickModeButtons[3] = new Button("CLEAR QUEUE", 10, 225, Color.RED) {
             @Override
             public void click() {
-                handler.getMineQueue().clear(false);
+                handler.getJobQueue().clear(false);
             }
         };
     }

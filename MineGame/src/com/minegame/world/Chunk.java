@@ -29,6 +29,7 @@ public class Chunk extends GameObject {
 
     @Override
     public void tick() {
+        //TODO: IF ELEMENT IS AIR DESTROY SELF IMMEDIATELY
 
         checkCollisions();
 
@@ -66,7 +67,7 @@ public class Chunk extends GameObject {
             ArrayList<Cell> neighbors = world.getNeighbors(cellX, cellY);
 
             for(Cell cell : neighbors) {
-                if(newRect.intersects(cell.getBounds()) && !cell.isAir()) {
+                if(newRect.intersects(cell.getBounds()) && (!cell.isAir() || cell.hasChunk())) {
                     //Collision
                     if(velX != 0) velX = 0;
                     if(velY != 0) velY = 0;
