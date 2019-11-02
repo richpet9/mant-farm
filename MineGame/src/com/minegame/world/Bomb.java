@@ -13,6 +13,7 @@ public class Bomb extends GameObject {
     private Color color = Color.BLACK;
     private boolean armed = false;
     private boolean detonated = false;
+    private boolean hasJob = false;
     private int radius;
     private int detonationTimer;
     private long armedTime;
@@ -81,6 +82,9 @@ public class Bomb extends GameObject {
     public int getRadius() {
         return radius;
     }
+    public boolean hasJob() {
+        return hasJob;
+    }
 
     //SETTERS
     public void setArmed(boolean armed) {
@@ -89,5 +93,8 @@ public class Bomb extends GameObject {
     }
     public void setRadius(int radius) {
         this.radius = radius;
+    }
+    public void setHasJob(boolean hasJob) {
+        this.hasJob = hasJob;
     }
 }

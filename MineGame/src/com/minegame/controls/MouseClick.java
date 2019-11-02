@@ -16,6 +16,8 @@ import java.awt.event.MouseListener;
 public class MouseClick extends Mouse implements MouseListener {
     private Menu menu;
     private HUD hud;
+    private int pressedCellX;
+    private int pressedCellY;
 
     public MouseClick(Handler handler, Menu menu, HUD hud) {
         super(handler);
@@ -25,10 +27,16 @@ public class MouseClick extends Mouse implements MouseListener {
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) { }
+    public void mouseClicked(MouseEvent e) {
+
+    }
 
     @Override
-    public void mousePressed(MouseEvent e) { }
+    public void mousePressed(MouseEvent e) {
+        //Store the clicked cell location to compare it to released location
+        pressedCellX = e.getX() / Cell.CELL_WIDTH;
+        pressedCellY = e.getY() / Cell.CELL_HEIGHT;
+    }
 
     @Override
     public void mouseReleased(MouseEvent e) {
@@ -36,6 +44,10 @@ public class MouseClick extends Mouse implements MouseListener {
         mouseY = e.getY();
         mouseCellX = e.getX() / Cell.CELL_WIDTH;
         mouseCellY = e.getY() / Cell.CELL_HEIGHT;
+
+        if(pressedCellX != mouseCellX) {
+            handler.makeSelection(pressedCellX, mouseCellX, pressedCellY);
+        }
 
         switch(Game.GAMESTATE) {
             case MENU:

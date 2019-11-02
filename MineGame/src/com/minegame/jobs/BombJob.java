@@ -7,7 +7,7 @@ public class BombJob extends Job {
     private Bomb bomb;
     private JobType type;
 
-    public enum JobType { ARM, DEFUSE };
+    public enum JobType { ARM, DISARM };
 
     public BombJob(Cell targetCell, Bomb bomb, JobType type) {
         this.id = JobID.BOMB;
@@ -19,12 +19,14 @@ public class BombJob extends Job {
 
     @Override
     void onAssigned() {
-
+        bomb.setHasJob(true);
     }
 
     @Override
     protected void onComplete(boolean success) {
-        bomb.setArmed(true);
+        if(success) {
+            bomb.setArmed(true);
+        }
 
         worker.setJob(null);
         worker.setWorking(false);

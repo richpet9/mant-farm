@@ -17,9 +17,10 @@ import java.util.Iterator;
  */
 public class Handler {
     private ArrayList<Cell> cells;                                 //Big array of cells
-    private ArrayList<GameObject> objects = new ArrayList<GameObject>();    //All other GameObjects
-    private JobQueue jobQueue;
+    private ArrayList<GameObject> objects = new ArrayList<GameObject>(64);    //All other GameObjects
+    private ArrayList<Cell> selection = new ArrayList<Cell>(128);
     private ArrayList<Job> inProgressJobs;
+    private JobQueue jobQueue;
     private Camera camera;
     private World world;
     private String clickMode = "SPAWN";
@@ -32,6 +33,7 @@ public class Handler {
     }
 
     public void tick() {
+        //TODO: Maybe we should move cells back to the world class?
         if(worldGenerated) {
             for(Cell cell : cells) {
                 //Camera fix pixel shift
@@ -128,6 +130,9 @@ public class Handler {
     public Camera getCamera() {
         return camera;
     }
+    public ArrayList<Cell> getSelection() {
+        return selection;
+    }
 
     //Setters
     public void setCamera(Camera camera) {
@@ -135,6 +140,9 @@ public class Handler {
     }
     public void setClickMode(String s) {
         this.clickMode = s;
+    }
+    public void setSelection(ArrayList<Cell> selection) {
+        this.selection = selection;
     }
 
     public void addObject(GameObject obj) {
@@ -151,15 +159,16 @@ public class Handler {
         world.generateWorld();
         //Get the cells
         Cell[][] worldArray = world.getCells();
+        //Create the empty list of cells. This should speed up the next process.
+        this.cells = new ArrayList<Cell>(worldArray.length * worldArray[0].length);
 
-        //Make cells a new ArrayList of the size of the world
+        //Make cells an ArrayList of the world cells
         this.cells = new ArrayList<Cell>(world.getNumY() * world.getNumY());
         for(int x = 0; x < worldArray.length; x++) {
             this.cells.addAll(Arrays.asList(worldArray[x]));
         }
 
         worldGenerated = true;
-        objects.add(new Chunk(world, Element.IRON, 10, 50));
     }
 
     /**
@@ -170,11 +179,16 @@ public class Handler {
      * @param cellY The Y cell location of the click (RELATIVE TO VIEWPORT)
      */
     public void handleClick(int pixelX, int pixelY, int cellX, int cellY) {
+        //TODO: Make MouseHandler class in core
         //MouseListener doesn't have access to the camera, so it sends us
         //we convert it here
         int trueX = (pixelX + camera.getX()) / Cell.CELL_WIDTH;
         int trueY = (pixelY + camera.getY()) / Cell.CELL_HEIGHT;
         Cell cell = world.getCell(trueX, trueY);
+        GameObject item = cell.getItem();
+
+        //TODO: "Selection" should always be size > 0, either 1 cell or or many. No need
+        // to check and do different things if didn't drag-- think Rimworld
 
         switch(clickMode) {
             case "SPAWN":
@@ -185,11 +199,21 @@ public class Handler {
                 }
                 break;
             case "MINE":
-                //Queue up the clicked cell for digging
-                if(cell.isAir()) return;
+                if(selection.size() > 0) {
+                    for(Cell selectedCell : selection) {
+                        //Queue up the clicked cell for digging
+                        if(selectedCell.isAir()) continue;
 
-                jobQueue.enqueue(new MineJob(cell));
-                cell.setOverlay(true);
+                        jobQueue.enqueue(new MineJob(selectedCell));
+                        selectedCell.setOverlay(true);
+                    }
+                } else {
+                    //Queue up the clicked cell for digging
+                    if(cell.isAir()) return;
+
+                    jobQueue.enqueue(new MineJob(cell));
+                    cell.setOverlay(true);
+                }
                 break;
             case "DIRT":
                 cell.setElement(Element.DIRT);
@@ -204,14 +228,40 @@ public class Handler {
                 break;
             case "ARM":
                 //See if we clicked on a bomb
-                GameObject item = cell.getItem();
                 if(item != null) {
                     if(cell.getItem().getID() == GameID.BOMB) {
                         //And add an arm job
                         Bomb bomb = (Bomb) cell.getItem();
+                        if(bomb.hasJob()) return;
                         jobQueue.enqueue(new BombJob(cell, bomb, BombJob.JobType.ARM));
                     }
                 }
+                break;
+            case "CONVEYOR":
+                //If we clicked air, and the cell doesn't contain an item...
+                if(cell.isAir() && cell.getItem() == null) {
+                    Conveyor conv = new Conveyor(trueX, trueY, -1);
+                    addObject(conv);
+                    cell.setItem(conv);
+                }
+                break;
+            case "CONVEYOR_DIR":
+                //See if we clicked on a conveyor
+                if(item != null) {
+                    if(cell.getItem().getID() == GameID.CONVEYOR) {
+                        //And add an arm job
+                        Conveyor conv = (Conveyor) cell.getItem();
+                        conv.setDirection(conv.getDirection() * -1);
+                    }
+                }
+                break;
+
+        }
+    }
+
+    public void makeSelection(int xStart, int xEnd, int y) {
+        for(int x = xStart; x < xEnd + 1; x++) {
+            selection.add(world.getCell(x, y));
         }
     }
 }

@@ -5,6 +5,7 @@ import com.minegame.world.Cell;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 
 /**
  * A class responsible for storing all mouse movement
@@ -25,7 +26,7 @@ public class MouseMove extends Mouse implements MouseMotionListener {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        //TODO: This is where block selection goes
+
     }
 
     public int getX() {

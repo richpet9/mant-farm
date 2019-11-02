@@ -7,10 +7,10 @@ import com.minegame.core.GameObject;
 import java.awt.*;
 
 public class Chunk extends GameObject {
-    private static final int FALL_DELAY = 5;
+    private static final int MOVE_DELAY = 5;
     private Element element;
     private World world;
-    private int timeToFall = FALL_DELAY;
+    private int timeToMove = MOVE_DELAY;
 
     public Chunk(World world, Element element, int cellX, int cellY) {
         this.element = element;
@@ -33,6 +33,7 @@ public class Chunk extends GameObject {
         //TODO: IF ELEMENT IS AIR DESTROY SELF IMMEDIATELY
 
         checkCollisions();
+        checkConveyors();
 
         super.tick();
     }
@@ -41,17 +42,17 @@ public class Chunk extends GameObject {
     public void render(Graphics2D g) {
         //Assign color based on element
         switch(element) {
-            case DIRT: g.setColor(new Color(0x91695C));
+            case DIRT: g.setColor(new Color(0x7A5649));
                 break;
-            case ROCK: g.setColor(new Color(0x7A8691));
+            case ROCK: g.setColor(new Color(0x66717C));
                 break;
-            case IRON: g.setColor(new Color(0x7D5E5F));
+            case IRON: g.setColor(new Color(0x6D4E4F));
                 break;
-            case COPPER: g.setColor(new Color(0xB27643));
+            case COPPER: g.setColor(new Color(0x916036));
                 break;
-            case SILVER: g.setColor(new Color(0xD4D4D4));
+            case SILVER: g.setColor(new Color(0xC4C4C4));
                 break;
-            case GOLD: g.setColor(new Color(0xD7CA68));
+            case GOLD: g.setColor(new Color(0xBBB059));
                 break;
         }
         g.fillOval(pixelX - cameraX, pixelY - cameraY, w, h);
@@ -64,8 +65,8 @@ public class Chunk extends GameObject {
         Cell neighbor = world.getCell(neighborX, neighborY);
 
         if(neighbor.isAir() && !neighbor.hasChunk()) {
-            timeToFall--;
-            if(timeToFall <= 0) {
+            timeToMove--;
+            if(timeToMove <= 0) {
                 world.getCell(cellX, cellY).setHasChunk(false);
                 cellX = neighborX;
                 cellY = neighborY;
@@ -74,7 +75,7 @@ public class Chunk extends GameObject {
 
                 neighbor.setHasChunk(true);
 
-                timeToFall = FALL_DELAY;
+                timeToMove = MOVE_DELAY;
             }
             return;
         }
@@ -87,8 +88,8 @@ public class Chunk extends GameObject {
             neighbor = world.getCell(neighborX, neighborY);
 
             if(neighbor.isAir() && !neighbor.hasChunk()) {
-                timeToFall--;
-                if(timeToFall <= 0) {
+                timeToMove--;
+                if(timeToMove <= 0) {
                     world.getCell(cellX, cellY).setHasChunk(false);
                     cellX = neighborX;
                     cellY = neighborY;
@@ -97,7 +98,7 @@ public class Chunk extends GameObject {
 
                     neighbor.setHasChunk(true);
 
-                    timeToFall = FALL_DELAY;
+                    timeToMove = MOVE_DELAY;
                 }
             }
             //Check bottom right cell
@@ -106,8 +107,8 @@ public class Chunk extends GameObject {
             neighbor = world.getCell(neighborX, neighborY);
 
             if(neighbor.isAir() && !neighbor.hasChunk()) {
-                timeToFall--;
-                if(timeToFall <= 0) {
+                timeToMove--;
+                if(timeToMove <= 0) {
                     world.getCell(cellX, cellY).setHasChunk(false);
                     cellX = neighborX;
                     cellY = neighborY;
@@ -116,7 +117,7 @@ public class Chunk extends GameObject {
 
                     neighbor.setHasChunk(true);
 
-                    timeToFall = FALL_DELAY;
+                    timeToMove = MOVE_DELAY;
                 }
             }
         } else {
@@ -126,8 +127,8 @@ public class Chunk extends GameObject {
             neighbor = world.getCell(neighborX, neighborY);
 
             if(neighbor.isAir() && !neighbor.hasChunk()) {
-                timeToFall--;
-                if(timeToFall <= 0) {
+                timeToMove--;
+                if(timeToMove <= 0) {
                     world.getCell(cellX, cellY).setHasChunk(false);
                     cellX = neighborX;
                     cellY = neighborY;
@@ -136,7 +137,7 @@ public class Chunk extends GameObject {
 
                     neighbor.setHasChunk(true);
 
-                    timeToFall = FALL_DELAY;
+                    timeToMove = MOVE_DELAY;
                 }
             }
             //Check bottom right cell
@@ -145,8 +146,8 @@ public class Chunk extends GameObject {
             neighbor = world.getCell(neighborX, neighborY);
 
             if(neighbor.isAir() && !neighbor.hasChunk()) {
-                timeToFall--;
-                if(timeToFall <= 0) {
+                timeToMove--;
+                if(timeToMove <= 0) {
                     world.getCell(cellX, cellY).setHasChunk(false);
                     cellX = neighborX;
                     cellY = neighborY;
@@ -155,9 +156,33 @@ public class Chunk extends GameObject {
 
                     neighbor.setHasChunk(true);
 
-                    timeToFall = FALL_DELAY;
+                    timeToMove = MOVE_DELAY;
                 }
             }
         }
+    }
+
+    private void checkConveyors() {
+        Cell currCell = world.getCell(cellX, cellY);
+        if(currCell.getItem() != null) {
+            if(currCell.getItem().getID() == GameID.CONVEYOR) {
+                 Conveyor conv = (Conveyor) currCell.getItem();
+                 Cell neighbor = world.getCell(Game.clamp(cellX + conv.getDirection(), 0, world.getNumX() - 1), cellY);
+                 if(neighbor.isAir() && !neighbor.hasChunk()) {
+                     timeToMove--;
+                     if(timeToMove <= 0) {
+                         currCell.setHasChunk(false);
+                         cellX = neighbor.getCellX();
+                         cellY = neighbor.getCellY();
+                         pixelX = cellX * Cell.CELL_WIDTH;
+                         pixelY = cellY * Cell.CELL_HEIGHT;
+                         neighbor.setHasChunk(true);
+
+                         timeToMove = MOVE_DELAY;
+                     }
+                 }
+            }
+        }
+
     }
 }

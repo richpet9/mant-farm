@@ -32,9 +32,9 @@ public class Game extends Canvas implements Runnable {
     private Menu menu;
     private HUD hud;
 
-    //DEBUG: variables
+    //DEBUG variables
     private int avgFPS = 0;
-    private int memoryCooldown = 60;
+    private int memoryCheckCooldown = 60;
     private double usedMemory;
 
     private Game() {
@@ -120,13 +120,14 @@ public class Game extends Canvas implements Runnable {
     private void tick() {
         handler.tick();
 
-        memoryCooldown--;
-        if(memoryCooldown <= 0) {
+        memoryCheckCooldown--;
+        if(memoryCheckCooldown <= 0) {
+            System.gc();
             double newUsedMemory = (double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1E6;
             double deltaUsed = newUsedMemory - usedMemory;
             usedMemory = newUsedMemory;
-            System.out.println("MB Used: " + new DecimalFormat("#.##").format(usedMemory) + "\t\t Delta Free MB: " + deltaUsed);
-            memoryCooldown = 60;
+            System.out.println("MB Used: " + new DecimalFormat("#.##").format(usedMemory) + "\t\t Delta Free MB: " + -deltaUsed);
+            memoryCheckCooldown = 60;
         }
     }
 

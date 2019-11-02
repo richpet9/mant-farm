@@ -4,5 +4,6 @@ public enum GameID {
     CELL,
     CHUNK,
     BOMB,
+    CONVEYOR,
     MANT
 }

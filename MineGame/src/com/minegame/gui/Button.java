@@ -9,6 +9,7 @@ import java.awt.*;
 public abstract class Button extends UserInterface {
     private String value;
     private Color color;
+    private boolean active = false;
     protected boolean mouseOver = false;
 
     public Button(String val, int x, int y, Color c) {
@@ -34,6 +35,7 @@ public abstract class Button extends UserInterface {
 
         Color oldColor = g.getColor();
         g.setColor(color);
+        if(active) g.setColor(Color.BLUE);
         g.drawString(value, x, y);
 
         g.setColor(oldColor);
@@ -41,4 +43,13 @@ public abstract class Button extends UserInterface {
 
     public abstract void click();
 
+    //GETTERS
+    public boolean isActive() {
+        return active;
+    }
+
+    //SETTERS
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 }

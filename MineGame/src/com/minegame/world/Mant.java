@@ -36,8 +36,8 @@ public class Mant extends GameObject {
         this.pixelY = cellY * Cell.CELL_HEIGHT;
         this.w = Cell.CELL_WIDTH * MANT_WIDTH;
         this.h = Cell.CELL_HEIGHT * MANT_HEIGHT;
-
         this.id = GameID.MANT;
+
         this.usesGravity = true;
         this.usesCollision = true;
         this.moves = true;

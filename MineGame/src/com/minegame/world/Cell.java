@@ -57,6 +57,8 @@ public class Cell extends GameObject {
             }
 
             g.fillRect(pixelX - cameraX , pixelY - cameraY , w, h);
+
+
         }
 
         if(overlay) {

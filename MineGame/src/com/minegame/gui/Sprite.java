@@ -14,6 +14,8 @@ public class Sprite {
     Sprite(GameID id, Image img) {
         this.id = id;
         this.image = img;
+
+        //TODO: Implement missing sprite image if null
     }
 
     public GameID getID() {
