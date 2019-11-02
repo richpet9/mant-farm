@@ -1,6 +1,5 @@
 package com.minegame.jobs;
 
-import com.minegame.core.GameObject;
 import com.minegame.world.Bomb;
 import com.minegame.world.Cell;
 

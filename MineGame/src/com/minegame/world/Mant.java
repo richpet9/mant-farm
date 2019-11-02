@@ -3,10 +3,10 @@ package com.minegame.world;
 import com.minegame.core.Game;
 import com.minegame.core.GameID;
 import com.minegame.core.GameObject;
-import com.minegame.jobs.Job;
 import com.minegame.exceptions.NullSpriteException;
 import com.minegame.gui.ImageLoader;
 import com.minegame.gui.Sprite;
+import com.minegame.jobs.Job;
 
 import java.awt.*;
 
@@ -26,6 +26,7 @@ public class Mant extends GameObject {
     private int failedJobCooldown = 3;           //In seconds
     private long arrivalTime = -1;
     private int climbingFromPixelY = -1;
+    private int speed = 2 * (Cell.CELL_WIDTH / 10);
 
     public Mant(World world, int cellX, int cellY, Color color) {
         this.world = world;
@@ -63,10 +64,10 @@ public class Mant extends GameObject {
             //If our left side is greater than the left side of the target cell
             if(pixelX > bounds.x + bounds.width) {
                 //target cell is to the left
-                velX = -2;
+                velX = -speed;
             } else if(pixelX + w < bounds.x) {  //If our right side is less than the right side of the target cell
                 //target cell is to the right
-                velX = 2;
+                velX = speed;
             } else {
                 //We are at target cell in x plane
                 velX = 0;
@@ -89,9 +90,9 @@ public class Mant extends GameObject {
             if(pixelY <= (climbingFromPixelY - Cell.CELL_HEIGHT)) {
                 climbing = false;
                 //Slow down our upwards speed when we stop climbing
-                velY = 1;
+                velY = (double) speed / 4;
             } else {
-                velY = 2;
+                velY = speed;
             }
             //Always block horizontal movement when climbing
             velX = 0;
@@ -105,7 +106,7 @@ public class Mant extends GameObject {
 
     @Override
     public void render(Graphics2D g) {
-        g.drawImage(icon.getImage(), pixelX - cameraX, pixelY - cameraY, null);
+        g.drawImage(icon.getImage(), pixelX - cameraX, pixelY - cameraY, w, h, null);
         g.setColor(Color.WHITE);
         g.drawString("c: " + cellX + " " + cellY, pixelX - cameraX, pixelY - cameraY - 5);
         g.drawString("p: " + pixelX + " " + pixelY, pixelX - cameraX, pixelY - cameraY - 20);
@@ -118,8 +119,7 @@ public class Mant extends GameObject {
         }
     }
 
-    private void checkCollisions() {
-        int objCellWidth = MANT_WIDTH;
+    private void checkCollisions() {int objCellWidth = MANT_WIDTH;
         int newX = pixelX + (int) Math.round(velX);
         int newY = pixelY - (int) Math.round(velY);
 

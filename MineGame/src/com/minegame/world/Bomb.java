@@ -1,6 +1,5 @@
 package com.minegame.world;
 
-import com.minegame.core.Game;
 import com.minegame.core.GameID;
 import com.minegame.core.GameObject;
 

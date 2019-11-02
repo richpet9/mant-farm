@@ -1,7 +1,6 @@
 package com.minegame.core;
 
 import com.minegame.world.Cell;
-import com.minegame.world.Element;
 
 import java.awt.*;
 

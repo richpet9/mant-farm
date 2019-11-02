@@ -99,7 +99,7 @@ public class Handler {
     public void render(Graphics2D g) {
         if(worldGenerated) {
             //Background, sky, if you would
-            g.setColor(new Color(0xD6AF8D));
+            g.setColor(new Color(0xA07D64));
             g.fillRect(0, 0, world.getWidth(), world.getHeight());
             //Render every cell
             for(Cell cell : cells) {
@@ -108,7 +108,7 @@ public class Handler {
         }
 
         //Render every game object
-        //TODO: Add Mants in their own list so they can be on top z-level
+        //TODO: check object z-index and render according to that
         for(int i = 0; i < objects.size(); i++) {
             GameObject object = objects.get(i);
             object.render(g);
@@ -195,8 +195,8 @@ public class Handler {
                 cell.setElement(Element.DIRT);
                 break;
             case "BOMB":
-                //If we clicked air, and the cell below us isn't air...
-                if(cell.isAir() && !world.getCell(trueX, trueY + 1).isAir()) {
+                //If we clicked air, and the cell below us isn't air, and the cell doesn't contain an item...
+                if(cell.isAir() && !world.getCell(trueX, trueY + 1).isAir() && cell.getItem() == null) {
                     Bomb bomb = new Bomb(trueX, trueY, 2, 5);
                     addObject(bomb);
                     cell.setItem(bomb);

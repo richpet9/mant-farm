@@ -1,6 +1,6 @@
 package com.minegame.tests;
 
-import com.minegame.world.*;
+import com.minegame.world.World;
 
 public class WorldTest {
 

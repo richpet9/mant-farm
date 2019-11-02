@@ -1,8 +1,8 @@
 package com.minegame.world;
 
-import com.minegame.core.Game;
 import com.minegame.core.GameID;
 import com.minegame.core.GameObject;
+import com.minegame.gui.Sprite;
 
 import java.awt.*;
 
@@ -20,6 +20,7 @@ public class Cell extends GameObject {
     private boolean overlay = false;
     private Color overlayColor = Color.white;
     private GameObject item = null;
+    private Sprite icon = null;
 
     public Cell(int pixelX, int pixelY, int cellX, int cellY) {
         this.cellX = cellX;
@@ -41,7 +42,7 @@ public class Cell extends GameObject {
         if(!isAir()) {
             //Assign color based on element
             switch(element) {
-                case DIRT: g.setColor(new Color(0x91695C));
+                case DIRT: g.setColor(new Color(0x7E614F));
                     break;
                 case ROCK: g.setColor(new Color(0x7A8691));
                     break;

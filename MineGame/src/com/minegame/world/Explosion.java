@@ -1,6 +1,6 @@
 package com.minegame.world;
 
-import com.minegame.core.GameID;
+import com.minegame.core.Game;
 
 /**
  * Creates an explosion at the specified location
@@ -24,8 +24,8 @@ public class Explosion {
     private void explode() {
         for(int x = 0; x < radius * 2; x++) {
             for (int y = 0; y < radius * 2; y++) {
-                int newX = (cellX - radius) + x;
-                int newY = (cellY - radius) + y;
+                int newX = Game.clamp((cellX - radius) + x, 0, world.getNumX() - 1);
+                int newY = Game.clamp((cellY - radius) + y, 0, world.getNumY() - 1);
 
                 double cellDist = Math.sqrt(Math.pow(x - radius, 2) + Math.pow(y - radius, 2));
 

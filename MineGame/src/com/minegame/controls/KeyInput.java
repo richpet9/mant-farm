@@ -1,6 +1,7 @@
 package com.minegame.controls;
 
 import com.minegame.core.Handler;
+import com.minegame.world.Cell;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
  * Key Input listener for camera controls
  */
 public class KeyInput implements KeyListener {
-    private static final int SHIFT_MULTIPLE = 10;
+    private static final int SHIFT_MULTIPLE = Cell.CELL_WIDTH;
     private Handler handler;
     private ArrayList<Integer> keysPressed = new ArrayList<Integer>();
 

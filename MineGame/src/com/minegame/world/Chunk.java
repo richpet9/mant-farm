@@ -10,7 +10,7 @@ public class Chunk extends GameObject {
     private static final int FALL_DELAY = 5;
     private Element element;
     private World world;
-    private int timeToFall = 10;
+    private int timeToFall = FALL_DELAY;
 
     public Chunk(World world, Element element, int cellX, int cellY) {
         this.element = element;

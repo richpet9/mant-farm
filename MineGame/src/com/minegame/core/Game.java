@@ -6,6 +6,7 @@ import com.minegame.controls.MouseMove;
 import com.minegame.controls.MouseWheel;
 import com.minegame.gui.ImageLoader;
 import com.minegame.gui.Menu;
+import com.minegame.world.Cell;
 import com.minegame.world.World;
 
 import java.awt.*;
@@ -16,8 +17,8 @@ import java.text.DecimalFormat;
  * Main class responsible for initializing all subsystems
  */
 public class Game extends Canvas implements Runnable {
-    public static final int VIEWPORT_WIDTH = 1202;
-    public static final int VIEWPORT_HEIGHT = 752;
+    public static final int VIEWPORT_WIDTH = 1200;
+    public static final int VIEWPORT_HEIGHT = 750;
     public static GameState GAMESTATE = GameState.MENU;
 
     private Thread thread;
@@ -37,7 +38,7 @@ public class Game extends Canvas implements Runnable {
     private double usedMemory;
 
     private Game() {
-        World world = new World(VIEWPORT_WIDTH * 4, VIEWPORT_HEIGHT * 4);
+        World world = new World(125 * 4, 75 * 4);
         this.camera = new Camera(0, world.getHeight() - VIEWPORT_HEIGHT, 0, VIEWPORT_WIDTH * 4);
         this.handler = new Handler(world);
         this.menu = new Menu(this, handler);
@@ -153,7 +154,7 @@ public class Game extends Canvas implements Runnable {
         g.setFont(new Font("Roboto", 1, 12));
         g.drawString("FPS: " + avgFPS, 10, 25);
         g.drawString("Pixel: [" + mouseMoveListener.getX() + ", " + mouseMoveListener.getY() + "]", 10, 45);
-        g.drawString("Cell: [" + mouseMoveListener.getCellX()  + ", " + mouseMoveListener.getCellY()   + "]", 10, 65);
+        g.drawString("Cell: [" + ((mouseMoveListener.getX() + camera.getX()) / Cell.CELL_WIDTH)  + ", " + ((mouseMoveListener.getY() + camera.getY()) / Cell.CELL_HEIGHT)   + "]", 10, 65);
         g.drawString("Camera X: " + camera.getX(), 10, 85);
         g.drawString("Camera Y: " + camera.getY(), 10, 105);
         g.drawString("GameObjects: " + handler.getObjects().size(), 10, 125);

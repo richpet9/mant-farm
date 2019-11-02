@@ -1,11 +1,7 @@
 package com.minegame.world;
 
-import com.minegame.core.Camera;
 import com.minegame.core.Game;
-import com.minegame.core.GameObject;
-import com.minegame.core.Handler;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -25,25 +21,29 @@ public class World {
     private int numY;
     private Random rand = new Random();
 
-    public World(int w, int h) {
-        this.width = w;
-        this.height = h;
+    public World(int numX, int numY) {
+        this.numX = numX;
+        this.numY = numY;
+        this.width = this.numX * Cell.CELL_WIDTH;
+        this.height = this.numY * Cell.CELL_HEIGHT;
 
-        this.numX = width / Cell.CELL_WIDTH;
-        this.numY = height / Cell.CELL_HEIGHT;
 
         this.cells = new Cell[numX][numY];
     }
 
     private void createLand() {
         System.out.print("Creating land...");
+        //For every cell in the x direction
         for(int x = 0; x < numX; x++) {
-            int test = rand.nextInt(GROUND_LEVEL_NOISE);
+            //Generate a random height for this column
+            int randHeight = rand.nextInt(GROUND_LEVEL_NOISE);
+            //For every cell in the y direction
             for(int y = 0; y < numY; y++) {
+                //Create a cell
                 cells[x][y] = new Cell(x * Cell.CELL_WIDTH, y * Cell.CELL_HEIGHT, x, y);
 
-                //If the cell is below ground level +/- 2, make it rock by default
-                if(y >= GROUND_LEVEL + test) cells[x][y].setElement(Element.ROCK);
+                //Get a random int with a max of the defined level of noise, and set rock to that point
+                if(y >= GROUND_LEVEL + randHeight) cells[x][y].setElement(Element.ROCK);
             }
         }
         System.out.print("Done!\n");
@@ -54,34 +54,38 @@ public class World {
         int maxMtnLevel = GROUND_LEVEL - MAX_MOUNTAIN_HEIGHT;
         int numPeaks = rand.nextInt(5) + 2; //Max three peaks, min 2 peaks
 
+        //For every peak
         for(int i = 0; i < numPeaks; i++) {
+            //Get a random X and Y location for the peak
             int peakX = rand.nextInt(numX);
             int peakY = rand.nextInt(GROUND_LEVEL - maxMtnLevel) + maxMtnLevel;
 
+            //Get the cell at this peaks location
             Cell currCell = cells[peakX][peakY];
-            int prevWidth = 2;  //This is the width of the previous generated layer of this mountain
-            int y = peakY;
+            int prevWidth = 2;  //This will be the width of the previous generated layer of this mountain
+            int y = peakY;      //This is the y location, or center pillar of the mountain
 
-            //While the current cell is air (the y < numY is a loop safety cutoff)
+            //While the current cell is above the defined ground level + it's noise level (deep enough to avoid bubbles)
             while(y < GROUND_LEVEL + GROUND_LEVEL_NOISE) {
                 //Make currCell ROCK
                 currCell.setElement(Element.ROCK);
 
-                //If our ideal width is less than 5, just use that (this is to make them not look lame)
-                int realWidth = rand.nextInt((int)( MOUNTAIN_SMOOTHING) + 1) + prevWidth;
+                //The width of this layer is a random number proportional the mountain smoothing constant
+                // a higher constant will result in wider, smoother, mountains. We add previous width so
+                // we don't generate overhangs. This could be a cool place to add some overhang generation code.
+                int width = rand.nextInt((int)( MOUNTAIN_SMOOTHING) + 1) + prevWidth;
 
                 //Set the cells next to this one to be rock, as a proportion of the distance from the peak
-                for(int xOffset = 0; xOffset < realWidth; xOffset++) {
+                for(int xOffset = 0; xOffset < width; xOffset++) {
                     if(peakX - xOffset >= 0) cells[peakX - xOffset][y].setElement(Element.ROCK);
                     if(peakX + xOffset < numX) cells[peakX + xOffset][y].setElement(Element.ROCK);
                 }
 
                 //Set previous width for future calculations
-                prevWidth = realWidth;
+                prevWidth = width;
 
                 //Get the cell below
-                y += 1;
-                currCell = cells[peakX][y];
+                currCell = cells[peakX][++y];
             }
         }
         System.out.print("Done!\n");
@@ -92,10 +96,11 @@ public class World {
         for(int x = 0; x < numX; x++) {
             for(int y = 0; y < numY - 1; y++) {
                 //Kinda like a base case. We don't need to smooth anything past level 100
-                //Fun fact: as of 10/27 this saves 5ms of world generation
+                //Fun fact: as of 10/27 this saves 5ms of world generation time
                 if(y > 100) break;
-                //If the element is not air, meaning the first terrain block
+                //If the element is not air, meaning the first terrain block in the column
                 if(!cells[x][y].isAir()) {
+                    //This checks if the cells next to it are air, meaning this cell is sticking out
                     //Also I hate having to duplicate similar code like this
                     if (x == 0) {
                         //In the first row, don't check left
@@ -115,7 +120,6 @@ public class World {
                         if ((cells[x - 1][y].isAir() && cells[x + 1][y].isAir())
                                 || (cells[x - 1][y].isAir() && cells[x - 1][y + 1].isAir())
                                 || (cells[x + 1][y].isAir() && cells[x + 1][y + 1].isAir())) {
-                            //Make this cell air. This is maybe a little lazy
                             cells[x][y].setElement(Element.AIR);
                         }
                     }
@@ -132,6 +136,7 @@ public class World {
         final double SILVER_RARITY = 0.00008;    //.008% chance of silver vein forming for every 100 cells
         final double GOLD_RARITY = 0.00005;      //.005% chance of gold vein forming for every 100 cells
 
+        //Go through every cell, generate a number, and build veins
         for(int x = 0; x < numX; x++) {
             for(int y = 0; y < numY; y++) {
                 if(cells[x][y].getElement() != Element.ROCK) continue;
@@ -157,13 +162,14 @@ public class World {
         System.out.print("\nDone creating ore veins!\n");
     }
 
-    private void buildOreVein(Element element, Cell root) {
-        int size = 0;
-        Cell currCell = root;
+    private void buildOreVein(Element ore, Cell root) {
+        int size = 0;           //The target size of the vein
+        Cell currCell = root;   //The root of the vein
 
-        root.setElement(element);
+        root.setElement(ore);   //Set the root to the ore
 
-        switch (element) {
+        //Set the target size based off ore
+        switch (ore) {
             case IRON:
                 size = 6;
                 break;
@@ -180,18 +186,19 @@ public class World {
 
         //TODO: Remove this safety, make it work
         // so sometimes this loop goes on forever, and I haven't been able to pinpoint why yet
-        // for now this works.
+        // for now this works. It has something to do with constantly going in circles.
         int safety = 0;
         while (size > 0 && safety < 100) {
             int x = currCell.getCellX();
             int y = currCell.getCellY();
 
+            //Generate a random direction
             switch (rand.nextInt(4)) {
                 case 0:
-                    //Spread north
+                    //Spread north - clamp x and y to world size
                     y = Game.clamp(y - 1, 0, numY - 1);
-                    if (cells[x][y].getElement() != element) {
-                        cells[x][y].setElement(element);
+                    if (cells[x][y].getElement() != ore) {
+                        cells[x][y].setElement(ore);
                         currCell = cells[x][y];
                         size -= 1;
                         continue;
@@ -200,8 +207,8 @@ public class World {
                 case 1:
                     //Spread east
                     x = Game.clamp(x + 1, 0, numX - 1);
-                    if (cells[x][y].getElement() != element) {
-                        cells[x][y].setElement(element);
+                    if (cells[x][y].getElement() != ore) {
+                        cells[x][y].setElement(ore);
                         currCell = cells[x][y];
                         size -= 1;
                         continue;
@@ -210,8 +217,8 @@ public class World {
                 case 2:
                     //Spread south
                     y = Game.clamp(y + 1, 0, numY - 1);
-                    if (cells[x][y].getElement() != element) {
-                        cells[x][y].setElement(element);
+                    if (cells[x][y].getElement() != ore) {
+                        cells[x][y].setElement(ore);
                         currCell = cells[x][y];
                         size -= 1;
                         continue;
@@ -220,8 +227,8 @@ public class World {
                 case 3:
                     //Spread west
                     x = Game.clamp(x - 1, 0, numX - 1);
-                    if (cells[x][y].getElement() != element) {
-                        cells[x][y].setElement(element);
+                    if (cells[x][y].getElement() != ore) {
+                        cells[x][y].setElement(ore);
                         currCell = cells[x][y];
                         size -= 1;
                     }
@@ -234,14 +241,14 @@ public class World {
         System.out.print("Laying down dirt...");
         //Iterate through every column at the top (where only AIR can be)
         for(int x = 0; x < numX; x++) {
+            //Start at the top, loop downward until we hit not air
             int y = 0;
             Cell currCell = cells[x][y];
 
             //While the current cell is air (the y < numY is a loop safety cutoff)
             while(currCell.isAir() && y < numY) {
                 //Get the cell below
-                y += 1;
-                Cell cellBelow = cells[x][y];
+                Cell cellBelow = cells[x][y + 1];
 
                 //If this cell is a rock,
                 if(cellBelow.getElement() == Element.ROCK) {
@@ -252,6 +259,7 @@ public class World {
                 }
 
                 currCell = cellBelow;
+                y++;
             }
         }
         System.out.print("Done!\n");
@@ -263,8 +271,8 @@ public class World {
         createMountains();
         smoothTerrain();
         createDirt();
-        smoothTerrain();
         createOreVeins();
+        smoothTerrain();
         long duration = System.nanoTime() - start;
         double ms = duration * 1E-6;
         System.out.println("World generation took: " + ms + "ms");
