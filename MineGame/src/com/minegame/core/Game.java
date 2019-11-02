@@ -1,9 +1,6 @@
 package com.minegame.core;
 
-import com.minegame.controls.KeyInput;
-import com.minegame.controls.MouseClick;
-import com.minegame.controls.MouseMove;
-import com.minegame.controls.MouseWheel;
+import com.minegame.controls.*;
 import com.minegame.gui.ImageLoader;
 import com.minegame.gui.Menu;
 import com.minegame.world.Cell;
@@ -12,6 +9,10 @@ import com.minegame.world.World;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.text.DecimalFormat;
+
+//TODO: What if the game is like a programmers game where you wire shit and have gates and
+// can chain together massive explosions or mine operations? Like Minecraft red stone, Factorio
+// wires, that kinda stuff. Keep it visually S I M P L E
 
 /**
  * Main class responsible for initializing all subsystems
@@ -29,6 +30,7 @@ public class Game extends Canvas implements Runnable {
     private MouseWheel mouseWheelListener;
     private KeyInput keyInput;
     private Handler handler;
+    private MouseHandler mHandler;
     private Menu menu;
     private HUD hud;
 
@@ -41,14 +43,16 @@ public class Game extends Canvas implements Runnable {
         World world = new World(125 * 4, 75 * 4);
         this.camera = new Camera(0, world.getHeight() - VIEWPORT_HEIGHT, 0, VIEWPORT_WIDTH * 4);
         this.handler = new Handler(world);
+        this.mHandler = new MouseHandler(this.handler, world);
         this.menu = new Menu(this, handler);
-        this.hud = new HUD(this, handler);
+        this.hud = new HUD(this, mHandler);
 
         this.handler.setCamera(camera);
+        this.handler.setmHandler(mHandler);
 
-        this.mouseClickListener = new MouseClick(handler, menu, hud);
-        this.mouseMoveListener = new MouseMove(handler);
-        this.mouseWheelListener = new MouseWheel(handler);
+        this.mouseClickListener = new MouseClick(mHandler, menu, hud);
+        this.mouseWheelListener = new MouseWheel(mHandler, camera);
+        this.mouseMoveListener = new MouseMove(mHandler);
         this.keyInput = new KeyInput(handler);
 
         this.addMouseListener(mouseClickListener);

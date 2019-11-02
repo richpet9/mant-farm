@@ -3,6 +3,7 @@ package com.minegame.controls;
 import com.minegame.core.Game;
 import com.minegame.core.HUD;
 import com.minegame.core.Handler;
+import com.minegame.core.MouseHandler;
 import com.minegame.gui.Button;
 import com.minegame.gui.Menu;
 import com.minegame.world.Cell;
@@ -19,8 +20,8 @@ public class MouseClick extends Mouse implements MouseListener {
     private int pressedCellX;
     private int pressedCellY;
 
-    public MouseClick(Handler handler, Menu menu, HUD hud) {
-        super(handler);
+    public MouseClick(MouseHandler mHandler, Menu menu, HUD hud) {
+        super(mHandler);
 
         this.menu = menu;
         this.hud = hud;
@@ -34,8 +35,8 @@ public class MouseClick extends Mouse implements MouseListener {
     @Override
     public void mousePressed(MouseEvent e) {
         //Store the clicked cell location to compare it to released location
-        pressedCellX = e.getX() / Cell.CELL_WIDTH;
-        pressedCellY = e.getY() / Cell.CELL_HEIGHT;
+        mHandler.setStartedDragX(e.getX() / Cell.CELL_WIDTH);
+        mHandler.setStartedDragY(e.getY() / Cell.CELL_WIDTH);
     }
 
     @Override
@@ -44,10 +45,6 @@ public class MouseClick extends Mouse implements MouseListener {
         mouseY = e.getY();
         mouseCellX = e.getX() / Cell.CELL_WIDTH;
         mouseCellY = e.getY() / Cell.CELL_HEIGHT;
-
-        if(pressedCellX != mouseCellX) {
-            handler.makeSelection(pressedCellX, mouseCellX, pressedCellY);
-        }
 
         switch(Game.GAMESTATE) {
             case MENU:
@@ -66,13 +63,15 @@ public class MouseClick extends Mouse implements MouseListener {
                     }
                 }
                 if(!onHUD) {
-                    handler.handleClick(mouseX, mouseY, mouseCellX, mouseCellY);
+                    mHandler.handleClick(mouseX, mouseY, mouseCellX, mouseCellY);
                 }
                 break;
             case GAMEOVER:
                 break;
             case PAUSE:
         }
+
+        mHandler.setDragging(false);
     }
 
     @Override

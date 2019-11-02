@@ -8,18 +8,18 @@ import java.awt.*;
  * A container and handler for all the GUI elements while in-game
  */
 public class HUD {
-    private Handler handler;
+    private MouseHandler mHandler;
     private Game game;
-    private Button[] clickModeButtons = new Button[8];
+    private Button[] clickModeButtons = new Button[7];
 
-    public HUD(Game game, Handler handler) {
+    public HUD(Game game, MouseHandler mHandler) {
         this.game = game;
-        this.handler = handler;
+        this.mHandler = mHandler;
 
         this.clickModeButtons[0] = new Button("MANT", 10, 165, Color.WHITE) {
             @Override
             public void click() {
-                handler.setClickMode("SPAWN");
+                mHandler.setClickMode("SPAWN");
                 resetActiveButton();
                 this.setActive(true);
             }
@@ -28,7 +28,7 @@ public class HUD {
         this.clickModeButtons[1] = new Button("MINE", 10, 185, Color.WHITE) {
             @Override
             public void click() {
-                handler.setClickMode("MINE");
+                mHandler.setClickMode("MINE");
                 resetActiveButton();
                 this.setActive(true);
             }
@@ -37,7 +37,7 @@ public class HUD {
         this.clickModeButtons[2] = new Button("DIRT", 10, 205, Color.WHITE) {
             @Override
             public void click() {
-                handler.setClickMode("DIRT");
+                mHandler.setClickMode("DIRT");
                 resetActiveButton();
                 this.setActive(true);
             }
@@ -46,7 +46,7 @@ public class HUD {
         this.clickModeButtons[3] = new Button("PLACE CONVEYOR", 10, 225, Color.WHITE) {
             @Override
             public void click() {
-                handler.setClickMode("CONVEYOR");
+                mHandler.setClickMode("CONVEYOR");
                 resetActiveButton();
                 this.setActive(true);
             }
@@ -55,7 +55,7 @@ public class HUD {
         this.clickModeButtons[4] = new Button("CHANGE CONVEYOR DIR", 10, 245, Color.WHITE) {
             @Override
             public void click() {
-                handler.setClickMode("CONVEYOR_DIR");
+                mHandler.setClickMode("CONVEYOR_DIR");
                 resetActiveButton();
                 this.setActive(true);
             }
@@ -64,7 +64,7 @@ public class HUD {
         this.clickModeButtons[5] = new Button("PLACE BOMB", 10, 265, Color.WHITE) {
             @Override
             public void click() {
-                handler.setClickMode("BOMB");
+                mHandler.setClickMode("BOMB");
                 resetActiveButton();
                 this.setActive(true);
             }
@@ -73,16 +73,9 @@ public class HUD {
         this.clickModeButtons[6] = new Button("ARM BOMB", 10, 285, Color.RED) {
             @Override
             public void click() {
-                handler.setClickMode("ARM");
+                mHandler.setClickMode("ARM");
                 resetActiveButton();
                 this.setActive(true);
-            }
-        };
-
-        this.clickModeButtons[7] = new Button("CLEAR QUEUE", 10, 305, Color.RED) {
-            @Override
-            public void click() {
-                handler.getJobQueue().clear(false);
             }
         };
     }

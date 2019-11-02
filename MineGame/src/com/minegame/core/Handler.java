@@ -1,9 +1,7 @@
 package com.minegame.core;
 
-import com.minegame.jobs.BombJob;
 import com.minegame.jobs.Job;
 import com.minegame.jobs.JobQueue;
-import com.minegame.jobs.MineJob;
 import com.minegame.world.*;
 
 import java.awt.*;
@@ -23,8 +21,9 @@ public class Handler {
     private JobQueue jobQueue;
     private Camera camera;
     private World world;
-    private String clickMode = "SPAWN";
+    private MouseHandler mHandler;
     private boolean worldGenerated = false;
+    private GameObject activeObject;
 
     public Handler(World world) {
         this.world = world;
@@ -96,6 +95,8 @@ public class Handler {
         //For every in progress job
         //This syntax was made my IntelliJ, how neat
         inProgressJobs.removeIf(Job::isComplete);
+
+        mHandler.tick();
     }
 
     public void render(Graphics2D g) {
@@ -115,6 +116,12 @@ public class Handler {
             GameObject object = objects.get(i);
             object.render(g);
         }
+
+        //NOTE: this object does not care where the camera is, since it's not a real object in the game
+        // thus, we don't update it in tick()
+        if(activeObject != null) {
+            activeObject.render(g);
+        }
     }
 
     //Getters
@@ -133,23 +140,28 @@ public class Handler {
     public ArrayList<Cell> getSelection() {
         return selection;
     }
+    public GameObject getActiveObject() {
+        return activeObject;
+    }
 
     //Setters
     public void setCamera(Camera camera) {
         this.camera = camera;
     }
-    public void setClickMode(String s) {
-        this.clickMode = s;
-    }
     public void setSelection(ArrayList<Cell> selection) {
         this.selection = selection;
     }
-
     public void addObject(GameObject obj) {
         objects.add(obj);
     }
     public void removeObject(GameObject obj) {
         objects.remove(obj);
+    }
+    public void setmHandler(MouseHandler mHandler) {
+        this.mHandler = mHandler;
+    }
+    public void setActiveObject(GameObject object) {
+        this.activeObject = object;
     }
 
     /**
@@ -169,99 +181,5 @@ public class Handler {
         }
 
         worldGenerated = true;
-    }
-
-    /**
-     * Handle a click event, called in MouseListeners
-     * @param pixelX The x location of the click
-     * @param pixelY The y location of the click
-     * @param cellX The x cell location of the click (RELATIVE TO VIEWPORT)
-     * @param cellY The Y cell location of the click (RELATIVE TO VIEWPORT)
-     */
-    public void handleClick(int pixelX, int pixelY, int cellX, int cellY) {
-        //TODO: Make MouseHandler class in core
-        //MouseListener doesn't have access to the camera, so it sends us
-        //we convert it here
-        int trueX = (pixelX + camera.getX()) / Cell.CELL_WIDTH;
-        int trueY = (pixelY + camera.getY()) / Cell.CELL_HEIGHT;
-        Cell cell = world.getCell(trueX, trueY);
-        GameObject item = cell.getItem();
-
-        //TODO: "Selection" should always be size > 0, either 1 cell or or many. No need
-        // to check and do different things if didn't drag-- think Rimworld
-
-        switch(clickMode) {
-            case "SPAWN":
-                //Add a mant to the map if clicked cell and cell below are both air
-                if(cell.isAir() && world.getCell(trueX, trueY + 1).isAir()) {
-                    //If the cell we clicked and one below it is air
-                    addObject(new Mant(world, trueX, trueY, Color.WHITE));
-                }
-                break;
-            case "MINE":
-                if(selection.size() > 0) {
-                    for(Cell selectedCell : selection) {
-                        //Queue up the clicked cell for digging
-                        if(selectedCell.isAir()) continue;
-
-                        jobQueue.enqueue(new MineJob(selectedCell));
-                        selectedCell.setOverlay(true);
-                    }
-                } else {
-                    //Queue up the clicked cell for digging
-                    if(cell.isAir()) return;
-
-                    jobQueue.enqueue(new MineJob(cell));
-                    cell.setOverlay(true);
-                }
-                break;
-            case "DIRT":
-                cell.setElement(Element.DIRT);
-                break;
-            case "BOMB":
-                //If we clicked air, and the cell below us isn't air, and the cell doesn't contain an item...
-                if(cell.isAir() && !world.getCell(trueX, trueY + 1).isAir() && cell.getItem() == null) {
-                    Bomb bomb = new Bomb(trueX, trueY, 2, 5);
-                    addObject(bomb);
-                    cell.setItem(bomb);
-                }
-                break;
-            case "ARM":
-                //See if we clicked on a bomb
-                if(item != null) {
-                    if(cell.getItem().getID() == GameID.BOMB) {
-                        //And add an arm job
-                        Bomb bomb = (Bomb) cell.getItem();
-                        if(bomb.hasJob()) return;
-                        jobQueue.enqueue(new BombJob(cell, bomb, BombJob.JobType.ARM));
-                    }
-                }
-                break;
-            case "CONVEYOR":
-                //If we clicked air, and the cell doesn't contain an item...
-                if(cell.isAir() && cell.getItem() == null) {
-                    Conveyor conv = new Conveyor(trueX, trueY, -1);
-                    addObject(conv);
-                    cell.setItem(conv);
-                }
-                break;
-            case "CONVEYOR_DIR":
-                //See if we clicked on a conveyor
-                if(item != null) {
-                    if(cell.getItem().getID() == GameID.CONVEYOR) {
-                        //And add an arm job
-                        Conveyor conv = (Conveyor) cell.getItem();
-                        conv.setDirection(conv.getDirection() * -1);
-                    }
-                }
-                break;
-
-        }
-    }
-
-    public void makeSelection(int xStart, int xEnd, int y) {
-        for(int x = xStart; x < xEnd + 1; x++) {
-            selection.add(world.getCell(x, y));
-        }
     }
 }

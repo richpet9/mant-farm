@@ -55,6 +55,9 @@ public class Bomb extends GameObject {
     @Override
     public void render(Graphics2D g) {
         g.setColor(color);
+
+        if(ghost) g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 70));
+
         g.fillRect((pixelX - cameraX) + 2, (pixelY - cameraY) + 2, w, h);
 
         if(!armed) {
@@ -96,5 +99,8 @@ public class Bomb extends GameObject {
     }
     public void setHasJob(boolean hasJob) {
         this.hasJob = hasJob;
+    }
+    public void setDetonated(boolean detonated) {
+        this.detonated = detonated;
     }
 }

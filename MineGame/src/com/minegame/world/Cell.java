@@ -10,8 +10,8 @@ import java.awt.*;
  * A Cell, represents the map grid areas
  */
 public class Cell extends GameObject {
-    public static final int CELL_WIDTH = 10;
-    public static final int CELL_HEIGHT = 10;
+    public static final int CELL_WIDTH = 15;
+    public static final int CELL_HEIGHT = 15;
     private static final int OVERLAY_PADDING = 2;
     private static final double CHUNK_DROP_CHANCE = 0.5;
     private Element element = Element.AIR;

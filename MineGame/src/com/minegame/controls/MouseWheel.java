@@ -1,9 +1,6 @@
 package com.minegame.controls;
 
-import com.minegame.core.Camera;
-import com.minegame.core.Game;
-import com.minegame.core.GameState;
-import com.minegame.core.Handler;
+import com.minegame.core.*;
 
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
@@ -14,9 +11,9 @@ import java.awt.event.MouseWheelListener;
 public class MouseWheel extends Mouse implements MouseWheelListener {
     private Camera camera;
 
-    public MouseWheel(Handler h) {
-        super(h);
-        this.camera = h.getCamera();
+    public MouseWheel(MouseHandler mHandler, Camera camera) {
+        super(mHandler);
+        this.camera = camera;
     }
 
     @Override

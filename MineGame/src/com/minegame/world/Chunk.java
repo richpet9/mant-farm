@@ -59,6 +59,7 @@ public class Chunk extends GameObject {
     }
 
     private void checkCollisions() {
+        //TODO: Add check for if we are on a cell with a conveyor
         //Get the cell below us
         int neighborY = Game.clamp(cellY + 1, 0, world.getNumY() - 1);
         int neighborX = Game.clamp(cellX, 0, world.getNumX() - 1);

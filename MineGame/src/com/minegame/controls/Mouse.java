@@ -2,6 +2,7 @@ package com.minegame.controls;
 
 import com.minegame.core.GameObject;
 import com.minegame.core.Handler;
+import com.minegame.core.MouseHandler;
 
 /**
  * Abstract class to make getting mouse info easier from our listeners.
@@ -11,10 +12,10 @@ public abstract class Mouse {
     protected int mouseY;
     protected int mouseCellX;
     protected int mouseCellY;
-    protected Handler handler;
+    protected MouseHandler mHandler;
 
-    public Mouse(Handler handler) {
-        this.handler = handler;
+    public Mouse(MouseHandler mHandler) {
+        this.mHandler = mHandler;
     }
 
     public boolean mouseOverXY(int x, int y, int w, int h) {

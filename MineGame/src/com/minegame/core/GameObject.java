@@ -17,6 +17,7 @@ public abstract class GameObject {
     protected boolean usesCollision = false;
     protected boolean moves = false;
     protected boolean qDestroy = false;
+    protected boolean ghost = false;
 
     //Getters
     public GameID getID() { return id; }
@@ -31,9 +32,8 @@ public abstract class GameObject {
     public double getVelX() { return velX; }
     public double getVelY() { return velY; }
     public boolean falls() {return usesGravity; }
-    public boolean isDestroy() {
-        return qDestroy;
-    }
+    public boolean isDestroy() { return qDestroy; }
+    public boolean isGhost() { return ghost; }
 
     //Setters
     public void setID(GameID id) { this.id = id; }
@@ -48,9 +48,8 @@ public abstract class GameObject {
     public void setVelX(double x) { this.velX = x; }
     public void setVelY(double y) { this.velY = y; }
     public void setUsesGravity(boolean usesGravity) { this.usesGravity = usesGravity; }
-    public void setDestroy(boolean qDestroy) {
-        this.qDestroy = qDestroy;
-    }
+    public void setDestroy(boolean qDestroy) { this.qDestroy = qDestroy; }
+    public void setGhost(boolean ghost) { this.ghost = ghost; }
 
     public void setCellXY(int x, int y) {
         this.cellX = x;
@@ -68,7 +67,7 @@ public abstract class GameObject {
     }
 
     public void tick() {
-        if(moves) {
+        if(moves && !ghost) {
             pixelX = pixelX + (int) Math.round(velX);
             pixelY = pixelY - (int) Math.round(velY);
 

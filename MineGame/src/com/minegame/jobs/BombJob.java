@@ -26,6 +26,8 @@ public class BombJob extends Job {
     protected void onComplete(boolean success) {
         if(success) {
             bomb.setArmed(true);
+        } else {
+            bomb.setHasJob(false);
         }
 
         worker.setJob(null);

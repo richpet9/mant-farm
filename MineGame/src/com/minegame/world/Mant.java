@@ -12,7 +12,7 @@ import java.awt.*;
 
 /**
  * As Mant is a class representing the moving figure of a character
- * on the screen.
+ * on the screen. Man-ant. Mant.
  */
 public class Mant extends GameObject {
     private static final int MANT_WIDTH = 1;    //IN CELLS
