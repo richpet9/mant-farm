@@ -10,7 +10,7 @@ import java.awt.*;
 public class HUD {
     private Handler handler;
     private Game game;
-    private Button[] clickModeButtons = new Button[4];
+    private Button[] clickModeButtons = new Button[6];
 
     public HUD(Game game, Handler handler) {
         this.game = game;
@@ -37,8 +37,21 @@ public class HUD {
             }
         };
 
+        this.clickModeButtons[3] = new Button("PLACE BOMB", 10, 225, Color.WHITE) {
+            @Override
+            public void click() {
+                handler.setClickMode("BOMB");
+            }
+        };
 
-        this.clickModeButtons[3] = new Button("CLEAR QUEUE", 10, 225, Color.RED) {
+        this.clickModeButtons[4] = new Button("ARM BOMB", 10, 245, Color.RED) {
+            @Override
+            public void click() {
+                handler.setClickMode("ARM");
+            }
+        };
+
+        this.clickModeButtons[5] = new Button("CLEAR QUEUE", 10, 265, Color.RED) {
             @Override
             public void click() {
                 handler.getJobQueue().clear(false);

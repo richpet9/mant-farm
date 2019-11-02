@@ -1,4 +1,4 @@
-package com.minegame.data;
+package com.minegame.jobs;
 
 import java.util.Arrays;
 
@@ -77,7 +77,7 @@ public class JobQueue {
     /**
      * Clears the queue of it's contents. If setNull is true, then it will nullify
      * all indexes in the array (in Theta-n time)
-     * @param setNull
+     * @param setNull Whether to clear the array in memory by setting all values to null.
      */
     public void clear(boolean setNull) {
         if(setNull) {

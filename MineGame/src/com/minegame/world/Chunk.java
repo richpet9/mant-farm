@@ -5,12 +5,12 @@ import com.minegame.core.GameID;
 import com.minegame.core.GameObject;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 public class Chunk extends GameObject {
+    private static final int FALL_DELAY = 5;
     private Element element;
     private World world;
-    private int fallDelay = 10;
+    private int timeToFall = 10;
 
     public Chunk(World world, Element element, int cellX, int cellY) {
         this.element = element;
@@ -64,8 +64,8 @@ public class Chunk extends GameObject {
         Cell neighbor = world.getCell(neighborX, neighborY);
 
         if(neighbor.isAir() && !neighbor.hasChunk()) {
-            fallDelay--;
-            if(fallDelay <= 0) {
+            timeToFall--;
+            if(timeToFall <= 0) {
                 world.getCell(cellX, cellY).setHasChunk(false);
                 cellX = neighborX;
                 cellY = neighborY;
@@ -74,7 +74,7 @@ public class Chunk extends GameObject {
 
                 neighbor.setHasChunk(true);
 
-                fallDelay = 30;
+                timeToFall = FALL_DELAY;
             }
             return;
         }
@@ -87,8 +87,8 @@ public class Chunk extends GameObject {
             neighbor = world.getCell(neighborX, neighborY);
 
             if(neighbor.isAir() && !neighbor.hasChunk()) {
-                fallDelay--;
-                if(fallDelay <= 0) {
+                timeToFall--;
+                if(timeToFall <= 0) {
                     world.getCell(cellX, cellY).setHasChunk(false);
                     cellX = neighborX;
                     cellY = neighborY;
@@ -97,7 +97,7 @@ public class Chunk extends GameObject {
 
                     neighbor.setHasChunk(true);
 
-                    fallDelay = 10;
+                    timeToFall = FALL_DELAY;
                 }
             }
             //Check bottom right cell
@@ -106,8 +106,8 @@ public class Chunk extends GameObject {
             neighbor = world.getCell(neighborX, neighborY);
 
             if(neighbor.isAir() && !neighbor.hasChunk()) {
-                fallDelay--;
-                if(fallDelay <= 0) {
+                timeToFall--;
+                if(timeToFall <= 0) {
                     world.getCell(cellX, cellY).setHasChunk(false);
                     cellX = neighborX;
                     cellY = neighborY;
@@ -116,7 +116,7 @@ public class Chunk extends GameObject {
 
                     neighbor.setHasChunk(true);
 
-                    fallDelay = 60;
+                    timeToFall = FALL_DELAY;
                 }
             }
         } else {
@@ -126,8 +126,8 @@ public class Chunk extends GameObject {
             neighbor = world.getCell(neighborX, neighborY);
 
             if(neighbor.isAir() && !neighbor.hasChunk()) {
-                fallDelay--;
-                if(fallDelay <= 0) {
+                timeToFall--;
+                if(timeToFall <= 0) {
                     world.getCell(cellX, cellY).setHasChunk(false);
                     cellX = neighborX;
                     cellY = neighborY;
@@ -136,7 +136,7 @@ public class Chunk extends GameObject {
 
                     neighbor.setHasChunk(true);
 
-                    fallDelay = 10;
+                    timeToFall = FALL_DELAY;
                 }
             }
             //Check bottom right cell
@@ -145,8 +145,8 @@ public class Chunk extends GameObject {
             neighbor = world.getCell(neighborX, neighborY);
 
             if(neighbor.isAir() && !neighbor.hasChunk()) {
-                fallDelay--;
-                if(fallDelay <= 0) {
+                timeToFall--;
+                if(timeToFall <= 0) {
                     world.getCell(cellX, cellY).setHasChunk(false);
                     cellX = neighborX;
                     cellY = neighborY;
@@ -155,7 +155,7 @@ public class Chunk extends GameObject {
 
                     neighbor.setHasChunk(true);
 
-                    fallDelay = 60;
+                    timeToFall = FALL_DELAY;
                 }
             }
         }

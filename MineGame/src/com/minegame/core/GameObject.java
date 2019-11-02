@@ -17,6 +17,7 @@ public abstract class GameObject {
     protected boolean usesGravity = false;
     protected boolean usesCollision = false;
     protected boolean moves = false;
+    protected boolean qDestroy = false;
 
     //Getters
     public GameID getID() { return id; }
@@ -31,6 +32,9 @@ public abstract class GameObject {
     public double getVelX() { return velX; }
     public double getVelY() { return velY; }
     public boolean falls() {return usesGravity; }
+    public boolean isDestroy() {
+        return qDestroy;
+    }
 
     //Setters
     public void setID(GameID id) { this.id = id; }
@@ -45,6 +49,10 @@ public abstract class GameObject {
     public void setVelX(double x) { this.velX = x; }
     public void setVelY(double y) { this.velY = y; }
     public void setUsesGravity(boolean usesGravity) { this.usesGravity = usesGravity; }
+    public void setDestroy(boolean qDestroy) {
+        this.qDestroy = qDestroy;
+    }
+
     public void setCellXY(int x, int y) {
         this.cellX = x;
         this.cellY = y;

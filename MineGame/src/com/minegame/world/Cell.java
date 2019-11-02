@@ -1,5 +1,6 @@
 package com.minegame.world;
 
+import com.minegame.core.Game;
 import com.minegame.core.GameID;
 import com.minegame.core.GameObject;
 
@@ -12,10 +13,13 @@ public class Cell extends GameObject {
     public static final int CELL_WIDTH = 10;
     public static final int CELL_HEIGHT = 10;
     private static final int OVERLAY_PADDING = 2;
+    private static final double CHUNK_DROP_CHANCE = 0.5;
     private Element element = Element.AIR;
     private Element dropChunk = null;
     private boolean hasChunk = false;
     private boolean overlay = false;
+    private Color overlayColor = Color.white;
+    private GameObject item = null;
 
     public Cell(int pixelX, int pixelY, int cellX, int cellY) {
         this.cellX = cellX;
@@ -24,9 +28,7 @@ public class Cell extends GameObject {
         this.pixelY = pixelY;
         this.w = CELL_WIDTH;
         this.h = CELL_HEIGHT;
-
         this.id = GameID.CELL;
-        this.moves = false;
     }
 
     @Override
@@ -57,27 +59,29 @@ public class Cell extends GameObject {
         }
 
         if(overlay) {
-            g.setColor(Color.WHITE);
+            g.setColor(overlayColor);
             g.fillRect((pixelX - cameraX) + OVERLAY_PADDING, (pixelY - cameraY) + OVERLAY_PADDING, w - (2 * OVERLAY_PADDING), h - (2* OVERLAY_PADDING));
         }
     }
 
     //Getters
-    public Element getElement() { return element; }
-    public Element dropChunk() { return dropChunk; }
-    public boolean isOverlayOn() { return overlay; }
+    public Element getElement() {
+        return element;
+    }
+    public Element dropChunk() {
+        return dropChunk;
+    }
+    public boolean isOverlayOn() {
+        return overlay;
+    }
     public boolean hasChunk() {
         return hasChunk;
     }
+    public GameObject getItem() {
+        return item;
+    }
 
     //Setters
-    public void setElement(Element element) {
-        this.element = element;
-        usesGravity = element != Element.AIR;
-    }
-    public void setDropChunk(Element chunk) {
-        this.dropChunk = chunk;
-    }
     public void setOverlay(boolean overlay) {
         this.overlay = overlay;
     }
@@ -86,5 +90,19 @@ public class Cell extends GameObject {
     }
     public void setHasChunk(boolean hasChunk) {
         this.hasChunk = hasChunk;
+    }
+    public void setItem(GameObject item) {
+        this.item = item;
+    }
+    public void setElement(Element element) {
+        this.element = element;
+    }
+    public void setDropChunk(Element chunk) {
+        //Random chance of actually dropping the chunk
+        if(Math.random() < CHUNK_DROP_CHANCE) {
+            this.dropChunk = chunk;
+        } else {
+            this.dropChunk = null;
+        }
     }
 }

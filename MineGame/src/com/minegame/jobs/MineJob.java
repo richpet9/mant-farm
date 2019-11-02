@@ -1,4 +1,4 @@
-package com.minegame.data;
+package com.minegame.jobs;
 
 import com.minegame.world.Cell;
 import com.minegame.world.Element;
@@ -6,7 +6,7 @@ import com.minegame.world.Element;
 public class MineJob extends Job {
 
     public MineJob(Cell targetCell) {
-        this.id = JobID.Mine;
+        this.id = JobID.MINE;
         this.targetCell = targetCell;
         this.duration = 3;
 
@@ -33,13 +33,6 @@ public class MineJob extends Job {
 
     @Override
     public void work() {
-        if(!worker.isWorking()) worker.setWorking(true);
-        if(startTime == -1) startTime = System.nanoTime();
-
-        long elapsedTime = (System.nanoTime() - startTime) / (long) 1E9;
-        if(elapsedTime >= duration) {
-            onComplete(true);
-            complete = true;
-        }
+        super.work();
     }
 }

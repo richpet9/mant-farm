@@ -32,11 +32,11 @@ public class Camera {
     }
 
     public void setY(int newY) {
-        this.y = Game.clamp(newY, offsetTop, offsetBottom);
+        this.y = (int) Game.clamp(newY, offsetTop, offsetBottom);
     }
 
     public void setX(int newX) {
-        this.x = Game.clamp(newX, offsetLeft, offsetRight);
+        this.x = (int) Game.clamp(newX, offsetLeft, offsetRight);
     }
 
     public void setZoomLevel(double newZoom) {

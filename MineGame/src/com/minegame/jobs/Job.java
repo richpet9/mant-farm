@@ -1,4 +1,4 @@
-package com.minegame.data;
+package com.minegame.jobs;
 
 import com.minegame.world.Cell;
 import com.minegame.world.Mant;
@@ -17,7 +17,17 @@ public abstract class Job {
 
     abstract void onAssigned();
     abstract void onComplete(boolean success);
-    public abstract void work();
+
+    public void work() {
+        if(!worker.isWorking()) worker.setWorking(true);
+        if(startTime == -1) startTime = System.nanoTime();
+
+        long elapsedTime = (System.nanoTime() - startTime) / (long) 1E9;
+        if(elapsedTime >= duration) {
+            onComplete(true);
+            complete = true;
+        }
+    }
 
     //Getters
     public Cell getTargetCell() {

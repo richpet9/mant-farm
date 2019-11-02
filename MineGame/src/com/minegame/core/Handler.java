@@ -1,8 +1,9 @@
 package com.minegame.core;
 
-import com.minegame.data.Job;
-import com.minegame.data.JobQueue;
-import com.minegame.data.MineJob;
+import com.minegame.jobs.BombJob;
+import com.minegame.jobs.Job;
+import com.minegame.jobs.JobQueue;
+import com.minegame.jobs.MineJob;
 import com.minegame.world.*;
 
 import java.awt.*;
@@ -50,18 +51,22 @@ public class Handler {
         }
 
         //For every object that isn't a cell
-        for (int i = 0; i < objects.size(); i++) {
-            GameObject object = objects.get(i);
+        for(Iterator<GameObject> iterator = objects.iterator(); iterator.hasNext();) {
+            GameObject object = iterator.next();
+
+            //If object is queued for destruction
+            if(object.isDestroy()) iterator.remove();
+
             //Give it camera info
             object.setCameraXY(camera.getX(), camera.getY());
 
             //make object fall
-            if (object.falls()) {
+            if(object.falls()) {
                 object.setVelY(object.getVelY() + -0.2);
             }
 
             //If this object is a MANT
-            if (object.getID() == GameID.MANT) {
+            if(object.getID() == GameID.MANT) {
                 Mant mant = (Mant) object;
                 //If the minequeue isn't empty, and this mant isn't assigned a cell already
                 if(!jobQueue.isEmpty() && mant.getJob() == null) {
@@ -69,6 +74,16 @@ public class Handler {
                     mant.setJob(jobQueue.peek());
                     //Add this job to the in-progress jobs
                     inProgressJobs.add(jobQueue.dequeue());
+                }
+            }
+
+            //If this object is a BOMB
+            if(object.getID() == GameID.BOMB) {
+                Bomb bomb = (Bomb) object;
+                if(bomb.isDetonated()) {
+                    //Remove the bomb from the world
+                    iterator.remove();
+                    new Explosion(world, bomb.getCellX(), bomb.getCellY(), bomb.getRadius());
                 }
             }
 
@@ -94,7 +109,7 @@ public class Handler {
 
         //Render every game object
         //TODO: Add Mants in their own list so they can be on top z-level
-        for (int i = 0; i < objects.size(); i++) {
+        for(int i = 0; i < objects.size(); i++) {
             GameObject object = objects.get(i);
             object.render(g);
         }
@@ -159,25 +174,44 @@ public class Handler {
         //we convert it here
         int trueX = (pixelX + camera.getX()) / Cell.CELL_WIDTH;
         int trueY = (pixelY + camera.getY()) / Cell.CELL_HEIGHT;
+        Cell cell = world.getCell(trueX, trueY);
 
-        switch (clickMode) {
+        switch(clickMode) {
             case "SPAWN":
-                //Add a mant to the map
-                if(world.getCell(trueX, trueY).isAir() && world.getCell(trueX, trueY + 1).isAir()) {
+                //Add a mant to the map if clicked cell and cell below are both air
+                if(cell.isAir() && world.getCell(trueX, trueY + 1).isAir()) {
                     //If the cell we clicked and one below it is air
                     addObject(new Mant(world, trueX, trueY, Color.WHITE));
                 }
                 break;
             case "MINE":
                 //Queue up the clicked cell for digging
-                Cell cell = world.getCell(trueX, trueY);
                 if(cell.isAir()) return;
 
                 jobQueue.enqueue(new MineJob(cell));
                 cell.setOverlay(true);
                 break;
             case "DIRT":
-                world.getCell(trueX, trueY).setElement(Element.DIRT);
+                cell.setElement(Element.DIRT);
+                break;
+            case "BOMB":
+                //If we clicked air, and the cell below us isn't air...
+                if(cell.isAir() && !world.getCell(trueX, trueY + 1).isAir()) {
+                    Bomb bomb = new Bomb(trueX, trueY, 2, 5);
+                    addObject(bomb);
+                    cell.setItem(bomb);
+                }
+                break;
+            case "ARM":
+                //See if we clicked on a bomb
+                GameObject item = cell.getItem();
+                if(item != null) {
+                    if(cell.getItem().getID() == GameID.BOMB) {
+                        //And add an arm job
+                        Bomb bomb = (Bomb) cell.getItem();
+                        jobQueue.enqueue(new BombJob(cell, bomb, BombJob.JobType.ARM));
+                    }
+                }
         }
     }
 }

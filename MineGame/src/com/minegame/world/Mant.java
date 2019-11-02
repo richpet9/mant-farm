@@ -3,7 +3,7 @@ package com.minegame.world;
 import com.minegame.core.Game;
 import com.minegame.core.GameID;
 import com.minegame.core.GameObject;
-import com.minegame.data.Job;
+import com.minegame.jobs.Job;
 import com.minegame.exceptions.NullSpriteException;
 import com.minegame.gui.ImageLoader;
 import com.minegame.gui.Sprite;

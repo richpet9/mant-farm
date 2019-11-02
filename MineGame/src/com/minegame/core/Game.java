@@ -6,11 +6,11 @@ import com.minegame.controls.MouseMove;
 import com.minegame.controls.MouseWheel;
 import com.minegame.gui.ImageLoader;
 import com.minegame.gui.Menu;
-import com.minegame.world.Mant;
 import com.minegame.world.World;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
+import java.text.DecimalFormat;
 
 /**
  * Main class responsible for initializing all subsystems
@@ -34,7 +34,7 @@ public class Game extends Canvas implements Runnable {
     //DEBUG: variables
     private int avgFPS = 0;
     private int memoryCooldown = 60;
-    private double freeMemory;
+    private double usedMemory;
 
     private Game() {
         World world = new World(VIEWPORT_WIDTH * 4, VIEWPORT_HEIGHT * 4);
@@ -121,10 +121,10 @@ public class Game extends Canvas implements Runnable {
 
         memoryCooldown--;
         if(memoryCooldown <= 0) {
-            double newFreeMemory = (double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024;
-            double deltaFree = newFreeMemory - freeMemory;
-            freeMemory = newFreeMemory;
-            System.out.println("KB Used: " + freeMemory + "\t\t Delta FreeKB: " + deltaFree);
+            double newUsedMemory = (double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1E6;
+            double deltaUsed = newUsedMemory - usedMemory;
+            usedMemory = newUsedMemory;
+            System.out.println("MB Used: " + new DecimalFormat("#.##").format(usedMemory) + "\t\t Delta Free MB: " + deltaUsed);
             memoryCooldown = 60;
         }
     }
