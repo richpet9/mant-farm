@@ -4,7 +4,10 @@ import com.minegame.core.Game;
 import com.minegame.core.GameState;
 import com.minegame.core.Handler;
 
-import java.awt.*;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 /**

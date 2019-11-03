@@ -4,7 +4,9 @@ import com.minegame.core.Game;
 import com.minegame.core.GameID;
 import com.minegame.core.GameObject;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
 public class Chunk extends GameObject {
     private static final int MOVE_DELAY = 5;

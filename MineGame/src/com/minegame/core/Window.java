@@ -1,7 +1,7 @@
 package com.minegame.core;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JFrame;
+import java.awt.Canvas;
 
 /**
  * A canvas-extended class for creating a JFrame window

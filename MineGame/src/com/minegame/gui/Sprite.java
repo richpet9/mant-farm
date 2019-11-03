@@ -1,24 +1,24 @@
 package com.minegame.gui;
 
-import com.minegame.core.GameID;
-
-import java.awt.*;
+import java.awt.Image;
 
 /**
  * A sprite which can be assigned to any GameObject
  */
 public class Sprite {
-    private GameID id;
+    private String id;
     private Image image;
+    private Image ghostImage;
+    private boolean ghost;
 
-    Sprite(GameID id, Image img) {
+    Sprite(String id, Image img) {
         this.id = id;
         this.image = img;
 
         //TODO: Implement missing sprite image if null
     }
 
-    public GameID getID() {
+    public String getID() {
         return id;
     }
 

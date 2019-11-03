@@ -8,7 +8,9 @@ import com.minegame.gui.ImageLoader;
 import com.minegame.gui.Sprite;
 import com.minegame.jobs.Job;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
 /**
  * As Mant is a class representing the moving figure of a character
@@ -20,6 +22,7 @@ public class Mant extends GameObject {
     private World world;
     private Job job;
     private Sprite icon;
+    private Sprite iconGhost;
     private boolean onGround = false;
     private boolean climbing = false;
     private boolean working = false;
@@ -43,7 +46,8 @@ public class Mant extends GameObject {
         this.moves = true;
 
         try {
-            this.icon = ImageLoader.getSprite(this.id);
+            this.icon = ImageLoader.getSprite("mant");
+            this.iconGhost = ImageLoader.getSprite("mant_g");
         } catch (NullSpriteException e) {
             e.printStackTrace();
             System.out.println("Sprite could not be found for object: " + this.id);
@@ -106,10 +110,9 @@ public class Mant extends GameObject {
 
     @Override
     public void render(Graphics2D g) {
-        g.drawImage(icon.getImage(), pixelX - cameraX, pixelY - cameraY, w, h, null);
+        g.drawImage((!ghost) ? icon.getImage() : iconGhost.getImage(), pixelX - cameraX, pixelY - cameraY, w, h, null);
         g.setColor(Color.WHITE);
-        g.drawString("c: " + cellX + " " + cellY, pixelX - cameraX, pixelY - cameraY - 5);
-        g.drawString("p: " + pixelX + " " + pixelY, pixelX - cameraX, pixelY - cameraY - 20);
+
         if(job != null) {
             g.setColor(Color.RED);
             g.drawString("Has Job!", pixelX - cameraX, pixelY - cameraY - 35);

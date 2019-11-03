@@ -1,6 +1,8 @@
 package com.minegame.gui;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
 
 /**
  * Abstract class to represent any GUI object

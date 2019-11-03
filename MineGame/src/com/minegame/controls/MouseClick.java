@@ -2,7 +2,6 @@ package com.minegame.controls;
 
 import com.minegame.core.Game;
 import com.minegame.core.HUD;
-import com.minegame.core.Handler;
 import com.minegame.core.MouseHandler;
 import com.minegame.gui.Button;
 import com.minegame.gui.Menu;

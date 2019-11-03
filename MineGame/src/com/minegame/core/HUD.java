@@ -2,7 +2,8 @@ package com.minegame.core;
 
 import com.minegame.gui.Button;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 
 /**
  * A container and handler for all the GUI elements while in-game

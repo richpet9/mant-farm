@@ -4,7 +4,9 @@ import com.minegame.core.GameID;
 import com.minegame.core.GameObject;
 import com.minegame.gui.Sprite;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
 /**
  * A Cell, represents the map grid areas

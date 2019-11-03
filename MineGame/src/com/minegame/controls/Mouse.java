@@ -1,7 +1,6 @@
 package com.minegame.controls;
 
 import com.minegame.core.GameObject;
-import com.minegame.core.Handler;
 import com.minegame.core.MouseHandler;
 
 /**

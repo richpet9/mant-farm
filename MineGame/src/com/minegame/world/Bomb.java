@@ -2,8 +2,13 @@ package com.minegame.world;
 
 import com.minegame.core.GameID;
 import com.minegame.core.GameObject;
+import com.minegame.exceptions.NullSpriteException;
+import com.minegame.gui.ImageLoader;
+import com.minegame.gui.Sprite;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.text.DecimalFormat;
 
 /**
@@ -18,20 +23,32 @@ public class Bomb extends GameObject {
     private int detonationTimer;
     private long armedTime;
     private double countdown;
+    private Sprite icon;
+    private Sprite iconGhost;
+    private Sprite iconArmed;
 
     public Bomb(int cellX, int cellY, int detonationTimer, int radius) {
         this.cellX = cellX;
         this.cellY = cellY;
         this.pixelX = cellX * Cell.CELL_WIDTH;
         this.pixelY = cellY * Cell.CELL_HEIGHT;
-        this.w = Cell.CELL_WIDTH - 4;
-        this.h = Cell.CELL_HEIGHT - 4;
+        this.w = Cell.CELL_WIDTH;
+        this.h = Cell.CELL_HEIGHT;
         this.id = GameID.BOMB;
 
         //TODO: Make detonation timer real-time based rather than tick based
         this.detonationTimer = detonationTimer;
         this.countdown = detonationTimer;
         this.radius = radius;
+
+        try {
+            this.icon = ImageLoader.getSprite("bomb");
+            this.iconArmed = ImageLoader.getSprite("bomb_armed");
+            this.iconGhost = ImageLoader.getSprite("bomb_g");
+        } catch (NullSpriteException e) {
+            e.printStackTrace();
+            System.out.println("Sprite could not be found for object: " + this.id);
+        }
     }
 
     @Override
@@ -56,15 +73,14 @@ public class Bomb extends GameObject {
     public void render(Graphics2D g) {
         g.setColor(color);
 
-        if(ghost) g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 70));
-
-        g.fillRect((pixelX - cameraX) + 2, (pixelY - cameraY) + 2, w, h);
 
         if(!armed) {
+            g.drawImage((!ghost) ? icon.getImage() : iconGhost.getImage(), pixelX - cameraX, pixelY - cameraY, w, h, null);
             g.setColor(Color.WHITE);
             g.drawString("Not Armed", pixelX - cameraX, pixelY - cameraY - 5);
         } else {
             g.setColor(Color.RED);
+            g.drawImage(iconArmed.getImage(), pixelX - cameraX, pixelY - cameraY, w, h, null);
             g.drawString("Armed", pixelX - cameraX, pixelY - cameraY - 5);
             g.drawString("T-" + new DecimalFormat("#.##").format(countdown), pixelX - cameraX, pixelY - cameraY - 20);
         }

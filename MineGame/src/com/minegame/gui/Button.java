@@ -1,6 +1,7 @@
 package com.minegame.gui;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 
 /**
  * Abstract class to represent clickable buttons

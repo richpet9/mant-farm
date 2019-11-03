@@ -1,6 +1,9 @@
 package com.minegame.controls;
 
-import com.minegame.core.*;
+import com.minegame.core.Camera;
+import com.minegame.core.Game;
+import com.minegame.core.GameState;
+import com.minegame.core.MouseHandler;
 
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;

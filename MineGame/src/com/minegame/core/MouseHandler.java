@@ -4,7 +4,7 @@ import com.minegame.jobs.BombJob;
 import com.minegame.jobs.MineJob;
 import com.minegame.world.*;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class MouseHandler {
     private Handler handler;

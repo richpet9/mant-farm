@@ -1,12 +1,18 @@
 package com.minegame.core;
 
-import com.minegame.controls.*;
+import com.minegame.controls.KeyInput;
+import com.minegame.controls.MouseClick;
+import com.minegame.controls.MouseMove;
+import com.minegame.controls.MouseWheel;
 import com.minegame.gui.ImageLoader;
 import com.minegame.gui.Menu;
 import com.minegame.world.Cell;
 import com.minegame.world.World;
 
-import java.awt.*;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 import java.text.DecimalFormat;
 
@@ -185,7 +191,14 @@ public class Game extends Canvas implements Runnable {
     }
 
     private void loadImages() {
-        ImageLoader.loadImage(GameID.MANT, "/resources/icons/mant/mant.png");
+        ImageLoader.loadImage("mant", "/resources/icons/mant/mant.png");
+        ImageLoader.loadImage("mant_g", "/resources/icons/mant/mant_g.png");
+        ImageLoader.loadImage("cell_dirt", "/resources/icons/cell/dirt.png");
+        ImageLoader.loadImage("conveyor", "/resources/icons/conveyor/conveyor.png");
+        ImageLoader.loadImage("conveyor_g", "/resources/icons/conveyor/conveyor_g.png");
+        ImageLoader.loadImage("bomb", "/resources/icons/bomb/bomb.png");
+        ImageLoader.loadImage("bomb_armed", "/resources/icons/bomb/bomb_armed.png");
+        ImageLoader.loadImage("bomb_g", "/resources/icons/bomb/bomb_g.png");
     }
 
 

@@ -1,11 +1,11 @@
 package com.minegame.gui;
 
 import com.minegame.core.Game;
-import com.minegame.core.GameID;
 import com.minegame.exceptions.NullSpriteException;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.ImageIcon;
+import java.awt.Image;
+import java.util.ArrayList;
 
 /**
  * A class for loading images into the Game object
@@ -13,8 +13,7 @@ import java.awt.*;
 public class ImageLoader {
     //Create an array of sprites with the length of our number of GameObjects
     private static final Sprite MISSING_SPRITE = new Sprite(null, null);
-    private static Sprite[] sprites = new Sprite[GameID.values().length];
-    private static int index = 0;
+    private static ArrayList<Sprite> sprites = new ArrayList<Sprite>(64);
 
     /**
      * Loads an image into the game
@@ -22,7 +21,7 @@ public class ImageLoader {
      * @param src The local file path of the image within the project
      * @throws NullPointerException If the image cannot be located
      */
-    public static void loadImage(GameID id, String src) {
+    public static void loadImage(String id, String src) {
         Image img;
         try {
             img = new ImageIcon(Game.class.getResource(src)).getImage();
@@ -32,22 +31,17 @@ public class ImageLoader {
         }
     }
 
-    public static Sprite getSprite(GameID id) throws NullSpriteException {
-        for(int i = 0; i < index; i++) {
-            if(sprites[i].getID() == id) {
-                return sprites[i];
+    public static Sprite getSprite(String id) throws NullSpriteException {
+        for(Sprite sprite : sprites) {
+            if(sprite.getID().equals(id)) {
+                return sprite;
             }
         }
 
         return MISSING_SPRITE;
     }
 
-    private static void addSprite(GameID id, Image img) {
-        try {
-            sprites[index++] = new Sprite(id, img);
-        } catch(IndexOutOfBoundsException e) {
-            e.printStackTrace();
-            System.out.println("ERROR: IndexOutOfBoundsException: Attempted to add sprites which exceeded number of GameObjects");
-        }
+    private static void addSprite(String id, Image img) {
+        sprites.add(new Sprite(id, img));
     }
 }

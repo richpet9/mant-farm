@@ -4,7 +4,8 @@ import com.minegame.jobs.Job;
 import com.minegame.jobs.JobQueue;
 import com.minegame.world.*;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;

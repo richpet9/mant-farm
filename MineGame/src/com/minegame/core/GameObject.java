@@ -2,7 +2,8 @@ package com.minegame.core;
 
 import com.minegame.world.Cell;
 
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
 /**
  * An abstract class of all the entities which can exist in the game.
