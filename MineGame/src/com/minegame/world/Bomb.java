@@ -15,7 +15,6 @@ import java.text.DecimalFormat;
  * A bomb can be detonated by Mants. It destroys a radius of cells and spawns chunks.
  */
 public class Bomb extends GameObject {
-    private Color color = Color.BLACK;
     private boolean armed = false;
     private boolean detonated = false;
     private boolean hasJob = false;
@@ -36,7 +35,6 @@ public class Bomb extends GameObject {
         this.h = Cell.CELL_HEIGHT;
         this.id = GameID.BOMB;
 
-        //TODO: Make detonation timer real-time based rather than tick based
         this.detonationTimer = detonationTimer;
         this.countdown = detonationTimer;
         this.radius = radius;
@@ -52,6 +50,11 @@ public class Bomb extends GameObject {
     }
 
     @Override
+    public Rectangle getBounds() {
+        return new Rectangle(pixelX, pixelY, w, h);
+    }
+
+    @Override
     public void tick() {
         super.tick();
 
@@ -63,7 +66,6 @@ public class Bomb extends GameObject {
             if(countdown < 0) countdown = 0;
 
             if(elapsedTime >= detonationTimer) {
-                color = Color.RED;
                 detonated = true;
             }
         }
@@ -71,24 +73,16 @@ public class Bomb extends GameObject {
 
     @Override
     public void render(Graphics2D g) {
-        g.setColor(color);
-
-
         if(!armed) {
             g.drawImage((!ghost) ? icon.getImage() : iconGhost.getImage(), pixelX - cameraX, pixelY - cameraY, w, h, null);
             g.setColor(Color.WHITE);
             g.drawString("Not Armed", pixelX - cameraX, pixelY - cameraY - 5);
         } else {
-            g.setColor(Color.RED);
             g.drawImage(iconArmed.getImage(), pixelX - cameraX, pixelY - cameraY, w, h, null);
+            g.setColor(Color.RED);
             g.drawString("Armed", pixelX - cameraX, pixelY - cameraY - 5);
             g.drawString("T-" + new DecimalFormat("#.##").format(countdown), pixelX - cameraX, pixelY - cameraY - 20);
         }
-    }
-
-    @Override
-    public Rectangle getBounds() {
-        return new Rectangle(pixelX, pixelY, w, h);
     }
 
     //GETTERS

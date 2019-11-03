@@ -61,13 +61,20 @@ public class Chunk extends GameObject {
     }
 
     private void checkCollisions() {
-        //TODO: Add check for if we are on a cell with a conveyor
+        //This checks collision with conveyor belts
+        if(world.getCell(cellX, cellY).hasItem()) {
+            if(world.getCell(cellX, cellY).getItem().getID() == GameID.CONVEYOR) {
+                //Our current cell has a conveyor, so cancel stay right where we are
+                return;
+            }
+        }
         //Get the cell below us
         int neighborY = Game.clamp(cellY + 1, 0, world.getNumY() - 1);
         int neighborX = Game.clamp(cellX, 0, world.getNumX() - 1);
         Cell neighbor = world.getCell(neighborX, neighborY);
 
-        if(neighbor.isAir() && !neighbor.hasChunk()) {
+        //If the cell below us is air and doesn't have a chunk, move to it
+        if(neighbor.isAir() && neighbor.hasNoChunk()) {
             timeToMove--;
             if(timeToMove <= 0) {
                 world.getCell(cellX, cellY).setHasChunk(false);
@@ -90,7 +97,7 @@ public class Chunk extends GameObject {
             neighborX = Game.clamp(cellX - 1, 0, world.getNumX() - 1);
             neighbor = world.getCell(neighborX, neighborY);
 
-            if(neighbor.isAir() && !neighbor.hasChunk()) {
+            if(neighbor.isAir() && neighbor.hasNoChunk()) {
                 timeToMove--;
                 if(timeToMove <= 0) {
                     world.getCell(cellX, cellY).setHasChunk(false);
@@ -109,7 +116,7 @@ public class Chunk extends GameObject {
             neighborX = Game.clamp(cellX + 1, 0, world.getNumX() - 1);
             neighbor = world.getCell(neighborX, neighborY);
 
-            if(neighbor.isAir() && !neighbor.hasChunk()) {
+            if(neighbor.isAir() && neighbor.hasNoChunk()) {
                 timeToMove--;
                 if(timeToMove <= 0) {
                     world.getCell(cellX, cellY).setHasChunk(false);
@@ -129,7 +136,7 @@ public class Chunk extends GameObject {
             neighborX = Game.clamp(cellX - 1, 0, world.getNumX() - 1);
             neighbor = world.getCell(neighborX, neighborY);
 
-            if(neighbor.isAir() && !neighbor.hasChunk()) {
+            if(neighbor.isAir() && neighbor.hasNoChunk()) {
                 timeToMove--;
                 if(timeToMove <= 0) {
                     world.getCell(cellX, cellY).setHasChunk(false);
@@ -148,7 +155,7 @@ public class Chunk extends GameObject {
             neighborX = Game.clamp(cellX + 1, 0, world.getNumX() - 1);
             neighbor = world.getCell(neighborX, neighborY);
 
-            if(neighbor.isAir() && !neighbor.hasChunk()) {
+            if(neighbor.isAir() && neighbor.hasNoChunk()) {
                 timeToMove--;
                 if(timeToMove <= 0) {
                     world.getCell(cellX, cellY).setHasChunk(false);
@@ -171,7 +178,7 @@ public class Chunk extends GameObject {
             if(currCell.getItem().getID() == GameID.CONVEYOR) {
                  Conveyor conv = (Conveyor) currCell.getItem();
                  Cell neighbor = world.getCell(Game.clamp(cellX + conv.getDirection(), 0, world.getNumX() - 1), cellY);
-                 if(neighbor.isAir() && !neighbor.hasChunk()) {
+                 if(neighbor.isAir() && neighbor.hasNoChunk()) {
                      timeToMove--;
                      if(timeToMove <= 0) {
                          currCell.setHasChunk(false);

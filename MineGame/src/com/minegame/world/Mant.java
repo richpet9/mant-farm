@@ -29,7 +29,7 @@ public class Mant extends GameObject {
     private int failedJobCooldown = 3;           //In seconds
     private long arrivalTime = -1;
     private int climbingFromPixelY = -1;
-    private int speed = 2 * (Cell.CELL_WIDTH / 10);
+    private double speed = 2 * (double) (Cell.CELL_WIDTH / 10);
 
     public Mant(World world, int cellX, int cellY, Color color) {
         this.world = world;
@@ -122,7 +122,9 @@ public class Mant extends GameObject {
         }
     }
 
-    private void checkCollisions() {int objCellWidth = MANT_WIDTH;
+    private void checkCollisions() {
+        //TODO: Redo all the collisions for Mants
+        int objCellWidth = MANT_WIDTH;
         int newX = pixelX + (int) Math.round(velX);
         int newY = pixelY - (int) Math.round(velY);
 

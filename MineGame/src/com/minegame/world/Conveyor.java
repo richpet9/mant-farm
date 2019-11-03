@@ -12,7 +12,6 @@ import java.awt.Rectangle;
 
 public class Conveyor extends GameObject {
     private int direction;
-    private Color color = Color.DARK_GRAY;
     private Sprite icon;
     private Sprite iconGhost;
 
@@ -38,13 +37,9 @@ public class Conveyor extends GameObject {
 
     @Override
     public void render(Graphics2D g) {
-        g.setColor(color);
         g.drawImage((!ghost) ? icon.getImage() : iconGhost.getImage(), pixelX - cameraX, pixelY - cameraY, w, h, null);
 
-
-        if(ghost) g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 70));
-
-        g.setColor(Color.RED);
+        g.setColor(Color.WHITE);
         g.drawString((direction > 0) ? ">" : "<", pixelX - cameraX, (pixelY - cameraY) + 5);
     }
 

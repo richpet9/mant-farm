@@ -53,6 +53,36 @@ public class KeyInput implements KeyListener {
         if(e.getKeyCode() == KeyEvent.VK_D) {
             handler.getCamera().setX((handler.getCamera().getX() + (10 * multiple)));
         }
+
+        //PRESSED M
+        if(e.getKeyCode() == KeyEvent.VK_M) {
+            handler.setClickMode("SPAWN");
+        }
+
+        //PRESSED N
+        if(e.getKeyCode() == KeyEvent.VK_N) {
+            handler.setClickMode("MINE");
+        }
+
+        //PRESSED B
+        if(e.getKeyCode() == KeyEvent.VK_B) {
+            handler.setClickMode("BOMB");
+        }
+
+        //PRESSED V
+        if(e.getKeyCode() == KeyEvent.VK_V) {
+            handler.setClickMode("ARM");
+        }
+
+        //PRESSED C
+        if(e.getKeyCode() == KeyEvent.VK_M) {
+            handler.setClickMode("CONVEYOR");
+        }
+
+        //PRESSED X
+        if(e.getKeyCode() == KeyEvent.VK_X) {
+            handler.setClickMode("CONVEYOR_DIR");
+        }
     }
 
     @Override

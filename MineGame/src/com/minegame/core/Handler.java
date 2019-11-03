@@ -164,6 +164,9 @@ public class Handler {
     public void setActiveObject(GameObject object) {
         this.activeObject = object;
     }
+    public void setClickMode(String clickMode) {
+        this.mHandler.setClickMode(clickMode);
+    }
 
     /**
      * Tells the World to generate and add's all the Cells it creates to a list here

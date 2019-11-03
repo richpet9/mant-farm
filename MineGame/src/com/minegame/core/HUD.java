@@ -12,6 +12,7 @@ public class HUD {
     private MouseHandler mHandler;
     private Game game;
     private Button[] clickModeButtons = new Button[7];
+    private Button activeButton;
 
     public HUD(Game game, MouseHandler mHandler) {
         this.game = game;
@@ -21,8 +22,6 @@ public class HUD {
             @Override
             public void click() {
                 mHandler.setClickMode("SPAWN");
-                resetActiveButton();
-                this.setActive(true);
             }
         };
 
@@ -30,8 +29,6 @@ public class HUD {
             @Override
             public void click() {
                 mHandler.setClickMode("MINE");
-                resetActiveButton();
-                this.setActive(true);
             }
         };
 
@@ -39,8 +36,6 @@ public class HUD {
             @Override
             public void click() {
                 mHandler.setClickMode("DIRT");
-                resetActiveButton();
-                this.setActive(true);
             }
         };
 
@@ -48,8 +43,6 @@ public class HUD {
             @Override
             public void click() {
                 mHandler.setClickMode("CONVEYOR");
-                resetActiveButton();
-                this.setActive(true);
             }
         };
 
@@ -57,8 +50,6 @@ public class HUD {
             @Override
             public void click() {
                 mHandler.setClickMode("CONVEYOR_DIR");
-                resetActiveButton();
-                this.setActive(true);
             }
         };
 
@@ -66,8 +57,6 @@ public class HUD {
             @Override
             public void click() {
                 mHandler.setClickMode("BOMB");
-                resetActiveButton();
-                this.setActive(true);
             }
         };
 
@@ -75,18 +64,45 @@ public class HUD {
             @Override
             public void click() {
                 mHandler.setClickMode("ARM");
-                resetActiveButton();
-                this.setActive(true);
             }
         };
     }
 
     public void tick() {
-
+        switch(mHandler.getClickMode()) {
+            case "SPAWN":
+                activeButton = clickModeButtons[0];
+                break;
+            case "MINE":
+                activeButton = clickModeButtons[1];
+                break;
+            case "DIRT":
+                activeButton = clickModeButtons[2];
+                break;
+            case "CONVEYOR":
+                activeButton = clickModeButtons[3];
+                break;
+            case "CONVEYOR_DIR":
+                activeButton = clickModeButtons[4];
+                break;
+            case "BOMB":
+                activeButton = clickModeButtons[5];
+                break;
+            case "ARM":
+                activeButton = clickModeButtons[6];
+                break;
+            default:
+                activeButton = null;
+        }
     }
 
     public void render(Graphics2D g) {
         for(int i = 0; i < clickModeButtons.length; i++) {
+            clickModeButtons[i].setActive(false);
+
+            if(activeButton != null) {
+                activeButton.setActive(true);
+            }
             clickModeButtons[i].render(g);
         }
     }

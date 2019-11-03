@@ -2,6 +2,8 @@ package com.minegame.world;
 
 import com.minegame.core.GameID;
 import com.minegame.core.GameObject;
+import com.minegame.exceptions.NullSpriteException;
+import com.minegame.gui.ImageLoader;
 import com.minegame.gui.Sprite;
 
 import java.awt.Color;
@@ -41,7 +43,7 @@ public class Cell extends GameObject {
 
     @Override
     public void render(Graphics2D g) {
-        if(!isAir()) {
+        if(!isAir() && icon == null) {
             //Assign color based on element
             switch(element) {
                 case DIRT: g.setColor(new Color(0x7E614F));
@@ -59,8 +61,10 @@ public class Cell extends GameObject {
             }
 
             g.fillRect(pixelX - cameraX , pixelY - cameraY , w, h);
+        }
 
-
+        if(icon != null) {
+            g.drawImage(icon.getImage(), pixelX - cameraX, pixelY - cameraY, w, h, null);
         }
 
         if(overlay) {
@@ -76,22 +80,25 @@ public class Cell extends GameObject {
     public Element dropChunk() {
         return dropChunk;
     }
+    public boolean isAir() {
+        return element == Element.AIR;
+    }
     public boolean isOverlayOn() {
         return overlay;
     }
-    public boolean hasChunk() {
-        return hasChunk;
+    public boolean hasNoChunk() {
+        return !hasChunk;
     }
     public GameObject getItem() {
         return item;
+    }
+    public boolean hasItem() {
+        return item != null;
     }
 
     //Setters
     public void setOverlay(boolean overlay) {
         this.overlay = overlay;
-    }
-    public boolean isAir() {
-        return element == Element.AIR;
     }
     public void setHasChunk(boolean hasChunk) {
         this.hasChunk = hasChunk;
@@ -108,6 +115,25 @@ public class Cell extends GameObject {
             this.dropChunk = chunk;
         } else {
             this.dropChunk = null;
+        }
+    }
+
+    /**
+     * Tells this cell to recompute what its icon should be
+     */
+    public void getIcon() {
+        switch(element) {
+            case AIR:
+                break;
+            case DIRT:
+                try {
+                    icon = ImageLoader.getSprite("cell_dirt");
+                } catch (NullSpriteException e) {
+                    e.printStackTrace();
+                }
+                break;
+            default:
+                icon = null;
         }
     }
 }

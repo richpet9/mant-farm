@@ -56,6 +56,8 @@ public class Game extends Canvas implements Runnable {
         this.handler.setCamera(camera);
         this.handler.setmHandler(mHandler);
 
+        camera.setY(300);
+
         this.mouseClickListener = new MouseClick(mHandler, menu, hud);
         this.mouseWheelListener = new MouseWheel(mHandler, camera);
         this.mouseMoveListener = new MouseMove(mHandler);
@@ -129,6 +131,7 @@ public class Game extends Canvas implements Runnable {
 
     private void tick() {
         handler.tick();
+        hud.tick();
 
         memoryCheckCooldown--;
         if(memoryCheckCooldown <= 0) {

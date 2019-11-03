@@ -93,7 +93,6 @@ public class MouseHandler {
         int trueX = (pixelX + handler.getCamera().getX()) / Cell.CELL_WIDTH;
         int trueY = (pixelY + handler.getCamera().getY()) / Cell.CELL_HEIGHT;
         Cell cell = world.getCell(trueX, trueY);
-        GameObject item = cell.getItem();
 
         //TODO: "Selection" should always be size > 0, either 1 cell or or many. No need
         // to check and do different things if didn't drag-- think Rimworld
@@ -119,7 +118,7 @@ public class MouseHandler {
                 break;
             case "BOMB":
                 //If we clicked air, and the cell below us isn't air, and the cell doesn't contain an item...
-                if(cell.isAir() && !world.getCell(trueX, trueY + 1).isAir() && cell.getItem() == null) {
+                if(cell.isAir() && !world.getCell(trueX, trueY + 1).isAir() && !cell.hasItem()) {
                     Bomb bomb = new Bomb(trueX, trueY, 2, 5);
                     handler.addObject(bomb);
                     cell.setItem(bomb);
@@ -127,7 +126,7 @@ public class MouseHandler {
                 break;
             case "ARM":
                 //See if we clicked on a bomb
-                if(item != null) {
+                if(cell.hasItem()) {
                     if(cell.getItem().getID() == GameID.BOMB) {
                         //And add an arm job
                         Bomb bomb = (Bomb) cell.getItem();
@@ -138,7 +137,7 @@ public class MouseHandler {
                 break;
             case "CONVEYOR":
                 //If we clicked air, and the cell doesn't contain an item...
-                if(cell.isAir() && cell.getItem() == null) {
+                if(cell.isAir() && !cell.hasItem()) {
                     Conveyor conv = new Conveyor(trueX, trueY, -1);
                     handler.addObject(conv);
                     cell.setItem(conv);
@@ -146,7 +145,7 @@ public class MouseHandler {
                 break;
             case "CONVEYOR_DIR":
                 //See if we clicked on a conveyor
-                if(item != null) {
+                if(cell.hasItem()) {
                     if(cell.getItem().getID() == GameID.CONVEYOR) {
                         //And add an arm job
                         Conveyor conv = (Conveyor) cell.getItem();
