@@ -33,6 +33,9 @@ public class Handler {
     }
 
     public void tick() {
+        //Tick the MouseHandler
+        mHandler.tick();
+
         //TODO: Maybe we should move cells back to the world class?
         if(worldGenerated) {
             for(Cell cell : cells) {
@@ -96,8 +99,6 @@ public class Handler {
         //For every in progress job
         //This syntax was made my IntelliJ, how neat
         inProgressJobs.removeIf(Job::isComplete);
-
-        mHandler.tick();
     }
 
     public void render(Graphics2D g) {

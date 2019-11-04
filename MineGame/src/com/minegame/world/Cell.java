@@ -73,6 +73,7 @@ public class Cell extends GameObject {
         }
     }
 
+
     //Getters
     public Element getElement() {
         return element;

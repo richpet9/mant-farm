@@ -20,8 +20,8 @@ public class Chunk extends GameObject {
         this.cellY = cellY;
         this.pixelX = cellX * Cell.CELL_WIDTH;
         this.pixelY = cellY * Cell.CELL_HEIGHT;
-        this.w = Cell.CELL_WIDTH;
-        this.h = Cell.CELL_HEIGHT;
+        this.w = Cell.CELL_WIDTH - 2;
+        this.h = Cell.CELL_HEIGHT - 2;
         this.id = GameID.CHUNK;
 
         this.world = world;
@@ -57,13 +57,14 @@ public class Chunk extends GameObject {
             case GOLD: g.setColor(new Color(0xBBB059));
                 break;
         }
-        g.fillOval(pixelX - cameraX, pixelY - cameraY, w, h);
+        g.fillOval((pixelX - cameraX) + 1, (pixelY - cameraY) + 1, w, h);
     }
 
     private void checkCollisions() {
         //This checks collision with conveyor belts
         if(world.getCell(cellX, cellY).hasItem()) {
-            if(world.getCell(cellX, cellY).getItem().getID() == GameID.CONVEYOR) {
+            GameID id = world.getCell(cellX, cellY).getItem().getID();
+            if(id == GameID.CONVEYOR || id == GameID.ELEVATOR) {
                 //Our current cell has a conveyor, so cancel stay right where we are
                 return;
             }
@@ -75,6 +76,8 @@ public class Chunk extends GameObject {
 
         //If the cell below us is air and doesn't have a chunk, move to it
         if(neighbor.isAir() && neighbor.hasNoChunk()) {
+            //If the cell below us has an elevator, don't drop this chunk
+            //TODO: Extract all these TimeToMove blocks to their own "moveToCell()" method
             timeToMove--;
             if(timeToMove <= 0) {
                 world.getCell(cellX, cellY).setHasChunk(false);
@@ -131,9 +134,9 @@ public class Chunk extends GameObject {
                 }
             }
         } else {
-            //Check bottom left cell
+            //Check bottom right cell
             neighborY = Game.clamp(cellY + 1, 0, world.getNumY() - 1);
-            neighborX = Game.clamp(cellX - 1, 0, world.getNumX() - 1);
+            neighborX = Game.clamp(cellX + 1, 0, world.getNumX() - 1);
             neighbor = world.getCell(neighborX, neighborY);
 
             if(neighbor.isAir() && neighbor.hasNoChunk()) {
@@ -150,9 +153,9 @@ public class Chunk extends GameObject {
                     timeToMove = MOVE_DELAY;
                 }
             }
-            //Check bottom right cell
+            //Check bottom left cell
             neighborY = Game.clamp(cellY + 1, 0, world.getNumY() - 1);
-            neighborX = Game.clamp(cellX + 1, 0, world.getNumX() - 1);
+            neighborX = Game.clamp(cellX - 1, 0, world.getNumX() - 1);
             neighbor = world.getCell(neighborX, neighborY);
 
             if(neighbor.isAir() && neighbor.hasNoChunk()) {
@@ -191,6 +194,21 @@ public class Chunk extends GameObject {
                          timeToMove = MOVE_DELAY;
                      }
                  }
+            } else if(currCell.getItem().getID() == GameID.ELEVATOR) {
+                Cell neighbor = world.getCell(cellX, Game.clamp(cellY - 1, 0, world.getNumY() - 1));
+                if(neighbor.isAir() && neighbor.hasNoChunk()) {
+                    timeToMove--;
+                    if(timeToMove <= 0) {
+                        currCell.setHasChunk(false);
+                        cellX = neighbor.getCellX();
+                        cellY = neighbor.getCellY();
+                        pixelX = cellX * Cell.CELL_WIDTH;
+                        pixelY = cellY * Cell.CELL_HEIGHT;
+                        neighbor.setHasChunk(true);
+
+                        timeToMove = MOVE_DELAY;
+                    }
+                }
             }
         }
 

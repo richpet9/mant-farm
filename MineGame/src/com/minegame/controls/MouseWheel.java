@@ -21,11 +21,11 @@ public class MouseWheel extends Mouse implements MouseWheelListener {
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        if(Game.GAMESTATE == GameState.PLAYING) {
-            double numClicks = e.getPreciseWheelRotation();
-            double targetY = camera.getY() + (numClicks * 10);
-            double y = camera.getY();
-            camera.setY((int) Math.round(y + (targetY - y) * 0.1));
-        }
+//        if(Game.GAMESTATE == GameState.PLAYING) {
+//            double numClicks = e.getPreciseWheelRotation();
+//            int targetY = (int) (camera.getY() + (numClicks * 10));
+//            camera.setY(targetY);
+//        }
+        //TODO: let's change zoom with mouse wheel
     }
 }

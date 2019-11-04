@@ -45,6 +45,8 @@ public class MouseClick extends Mouse implements MouseListener {
         mouseCellX = e.getX() / Cell.CELL_WIDTH;
         mouseCellY = e.getY() / Cell.CELL_HEIGHT;
 
+        mHandler.setDragging(false);
+
         switch(Game.GAMESTATE) {
             case MENU:
                 for(Button button : menu.getButtons()) {
@@ -63,14 +65,13 @@ public class MouseClick extends Mouse implements MouseListener {
                 }
                 if(!onHUD) {
                     mHandler.handleClick(mouseX, mouseY, mouseCellX, mouseCellY);
+                    mHandler.checkSelection();
                 }
                 break;
             case GAMEOVER:
                 break;
             case PAUSE:
         }
-
-        mHandler.setDragging(false);
     }
 
     @Override

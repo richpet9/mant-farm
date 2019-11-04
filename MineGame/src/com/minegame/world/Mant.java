@@ -31,7 +31,7 @@ public class Mant extends GameObject {
     private int climbingFromPixelY = -1;
     private double speed = 2 * (double) (Cell.CELL_WIDTH / 10);
 
-    public Mant(World world, int cellX, int cellY, Color color) {
+    public Mant(World world, int cellX, int cellY) {
         this.world = world;
         this.cellX = cellX;
         this.cellY = cellY;

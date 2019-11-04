@@ -11,7 +11,7 @@ import java.awt.Graphics2D;
 public class HUD {
     private MouseHandler mHandler;
     private Game game;
-    private Button[] clickModeButtons = new Button[7];
+    private Button[] clickModeButtons = new Button[8];
     private Button activeButton;
 
     public HUD(Game game, MouseHandler mHandler) {
@@ -53,14 +53,21 @@ public class HUD {
             }
         };
 
-        this.clickModeButtons[5] = new Button("PLACE BOMB", 10, 265, Color.WHITE) {
+        this.clickModeButtons[5] = new Button("PLACE ELEVATOR", 10, 265, Color.WHITE) {
+            @Override
+            public void click() {
+                mHandler.setClickMode("ELEVATOR");
+            }
+        };
+
+        this.clickModeButtons[6] = new Button("PLACE BOMB", 10, 285, Color.WHITE) {
             @Override
             public void click() {
                 mHandler.setClickMode("BOMB");
             }
         };
 
-        this.clickModeButtons[6] = new Button("ARM BOMB", 10, 285, Color.RED) {
+        this.clickModeButtons[7] = new Button("ARM BOMB", 10, 305, Color.RED) {
             @Override
             public void click() {
                 mHandler.setClickMode("ARM");
@@ -85,11 +92,14 @@ public class HUD {
             case "CONVEYOR_DIR":
                 activeButton = clickModeButtons[4];
                 break;
-            case "BOMB":
+            case "ELEVATOR":
                 activeButton = clickModeButtons[5];
                 break;
-            case "ARM":
+            case "BOMB":
                 activeButton = clickModeButtons[6];
+                break;
+            case "ARM":
+                activeButton = clickModeButtons[7];
                 break;
             default:
                 activeButton = null;

@@ -5,5 +5,6 @@ public enum GameID {
     CHUNK,
     BOMB,
     CONVEYOR,
+    ELEVATOR,
     MANT
 }

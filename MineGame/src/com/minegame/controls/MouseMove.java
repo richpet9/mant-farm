@@ -21,7 +21,6 @@ public class MouseMove extends Mouse implements MouseMotionListener {
         mouseY = e.getY();
         mouseCellX = e.getX() / Cell.CELL_WIDTH;
         mouseCellY = e.getY() / Cell.CELL_HEIGHT;
-
         mHandler.setMouseCellXY(mouseCellX, mouseCellY);
     }
 
@@ -31,9 +30,10 @@ public class MouseMove extends Mouse implements MouseMotionListener {
         mouseY = e.getY();
         mouseCellX = e.getX() / Cell.CELL_WIDTH;
         mouseCellY = e.getY() / Cell.CELL_HEIGHT;
+        mHandler.setMouseCellXY(mouseCellX, mouseCellY);
 
-        int xDif = mHandler.getStartedDragX() - mouseCellX;
-        int yDif = mHandler.getStartedDragY() - mouseCellY;
+        mHandler.setDragging(true);
+        mHandler.checkSelection();
     }
 
     public int getX() {
