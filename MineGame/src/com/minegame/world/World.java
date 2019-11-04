@@ -41,24 +41,31 @@ public class World {
         //TODO: Maybe pull a minecraft and only process cells within a certain distance or chunk
         for(int x = 0; x < numX; x++) {
             for(int y = 0; y < numY; y++) {
+                //In an effort to speed up processing time per tick, we are going to completely ignore air cells
+                if(cells[x][y].isAir()) continue;
+
                 Cell cell = cells[x][y];
 
                 //Camera fix pixel shift
                 cell.setCameraXY(handler.getCamera().getX(), handler.getCamera().getY());
 
                 //If the cells has gravity and isn't in the last row
+                //TODO: there has to be a better way to instantiate chunks than looking for a flag
                 if(cell.dropChunk() != null) {
-                    Chunk newChunk = new Chunk(this, cell.dropChunk(), cell.getCellX(), cell.getCellY());
-                    handler.addObject(newChunk);
+                    if(Math.random() < Cell.CHUNK_DROP_CHANCE) {
+                        Chunk newChunk = new Chunk(this, cell.dropChunk(), cell.getCellX(), cell.getCellY());
+                        handler.addObject(newChunk);
+                        cell.setHasChunk(true);
+                    }
                     cell.setDropChunk(null);
-                    cell.setHasChunk(true);
+                    cell.setElement(Element.AIR);
                 }
             }
         }
     }
 
     public void render(Graphics2D g) {
-        //This disgusting for loop only loops through the cells which are within the viewport
+        //These disgusting for-loops only loop through the cells which are within the viewport
         for(int x = (handler.getCamera().getX() / Cell.CELL_WIDTH); x <= (handler.getCamera().getX() / Cell.CELL_WIDTH) + (Game.VIEWPORT_WIDTH / Cell.CELL_WIDTH); x++) {
             for(int y = (handler.getCamera().getY() / Cell.CELL_HEIGHT); y <= (handler.getCamera().getY() / Cell.CELL_HEIGHT) + (Game.VIEWPORT_WIDTH / Cell.CELL_HEIGHT); y++) {
                 cells[Game.clamp(x, 0, numX - 1)][Game.clamp(y, 0, numY - 1)].render(g);
@@ -310,7 +317,7 @@ public class World {
         smoothTerrain();
         long duration = System.nanoTime() - start;
         double ms = duration * 1E-6;
-        System.out.println("World generation took: " + ms + "ms");
+        System.out.println("Created " + (numX * numY) + " cells in " + ms + "ms");
     }
 
     public int getNumX() {

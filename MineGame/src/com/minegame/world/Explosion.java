@@ -4,7 +4,7 @@ import com.minegame.core.Game;
 import com.minegame.core.GameID;
 
 /**
- * Creates an explosion at the specified location
+ * Creates an explosion with the center at the specified location
  */
 public class Explosion {
     private World world;
@@ -35,15 +35,12 @@ public class Explosion {
                 Cell cell = world.getCell(newX, newY);
                 if (!cell.isAir()) {
                     cell.setDropChunk(cell.getElement());
-                    cell.setElement(Element.AIR);
                 }
 
                 //Detonate any bombs within the blast radius
-                if(cell.getItem() != null) {
-                    if(cell.getItem().getID() == GameID.BOMB) {
-                        Bomb bomb = (Bomb) cell.getItem();
-                        bomb.setDetonated(true);
-                    }
+                if(cell.hasItem() && cell.getItem().getID() == GameID.BOMB) {
+                    Bomb bomb = (Bomb) cell.getItem();
+                    bomb.setDetonated(true);
                 }
 
             }

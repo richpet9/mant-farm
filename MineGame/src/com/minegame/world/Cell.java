@@ -16,8 +16,8 @@ import java.awt.Rectangle;
 public class Cell extends GameObject {
     public static final int CELL_WIDTH = 15;
     public static final int CELL_HEIGHT = 15;
+    public static final double CHUNK_DROP_CHANCE = 0.65;
     private static final int OVERLAY_PADDING = 2;
-    private static final double CHUNK_DROP_CHANCE = 0.5;
     private Element element = Element.AIR;
     private Element dropChunk = null;
     private boolean hasChunk = false;
@@ -44,11 +44,13 @@ public class Cell extends GameObject {
 
     @Override
     public void render(Graphics2D g) {
-        if(icon != null && !isAir()) {
-            g.drawImage(icon.getImage(), pixelX - cameraX, pixelY - cameraY, w, h, null);
-        } else if(!isAir()) {
-            g.setColor(mainColor);
-            g.fillRect(pixelX - cameraX , pixelY - cameraY , w, h);
+        if(!isAir()) {
+            if(icon != null) {
+                g.drawImage(icon.getImage(), pixelX - cameraX, pixelY - cameraY, w, h, null);
+            } else  {
+                g.setColor(mainColor);
+                g.fillRect(pixelX - cameraX , pixelY - cameraY , w, h);
+            }
         }
 
         if(overlay) {
@@ -113,12 +115,7 @@ public class Cell extends GameObject {
         }
     }
     public void setDropChunk(Element chunk) {
-        //Random chance of actually dropping the chunk
-        if(Math.random() < CHUNK_DROP_CHANCE) {
-            this.dropChunk = chunk;
-        } else {
-            this.dropChunk = null;
-        }
+        this.dropChunk = chunk;
     }
 
     /**
