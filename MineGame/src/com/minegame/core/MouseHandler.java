@@ -115,7 +115,7 @@ public class MouseHandler {
             case "MINE":
                 //Queue up the clicked cell for digging
                 for(Cell selectedCell : selection) {
-                    if(selectedCell.isAir()) return;
+                    if(selectedCell.isAir()) continue;
                     handler.getJobQueue().enqueue(new MineJob(selectedCell));
                     selectedCell.setOverlay(true);
                 }

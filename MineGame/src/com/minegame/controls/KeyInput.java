@@ -75,7 +75,7 @@ public class KeyInput implements KeyListener {
         }
 
         //PRESSED C
-        if(e.getKeyCode() == KeyEvent.VK_M) {
+        if(e.getKeyCode() == KeyEvent.VK_C) {
             handler.setClickMode("CONVEYOR");
         }
 
