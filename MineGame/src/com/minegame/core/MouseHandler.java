@@ -9,16 +9,14 @@ import java.util.Iterator;
 
 public class MouseHandler {
     private Handler handler;
-    private World world;
     private String clickMode = "NONE";
     private boolean dragging = false;
     private ArrayList<Cell> selection = new ArrayList<Cell>(64);
     private int mouseCellX, mouseCellY, startedDragX, startedDragY;
     private int camXOffset, camYOffset;
 
-    public MouseHandler(Handler handler, World world) {
+    public MouseHandler(Handler handler) {
         this.handler = handler;
-        this.world = world;
     }
 
     public void tick() {
@@ -57,7 +55,7 @@ public class MouseHandler {
         this.clickMode = clickMode;
         switch(clickMode) {
             case "SPAWN":
-                handler.setActiveObject(new Mant(world, mouseCellX, mouseCellY));
+                handler.setActiveObject(new Mant(handler.getWorld(), mouseCellX, mouseCellY));
                 break;
             case "BOMB":
                 handler.setActiveObject(new Bomb(mouseCellX, mouseCellY, 0, 0));
@@ -100,7 +98,7 @@ public class MouseHandler {
         //we convert it here
         int trueX = cellX + camXOffset;
         int trueY = cellY + camYOffset;
-        Cell cell = world.getCell(trueX, trueY);
+        Cell cell = handler.getWorld().getCell(trueX, trueY);
 
         //TODO: "Selection" should always be size > 0, either 1 cell or or many. No need
         // to check and do different things if didn't drag-- think Rimworld
@@ -108,9 +106,9 @@ public class MouseHandler {
         switch(clickMode) {
             case "SPAWN":
                 //Add a mant to the map if clicked cell and cell below are both air
-                if(cell.isAir() && world.getCell(trueX, trueY + 1).isAir()) {
+                if(cell.isAir() && handler.getWorld().getCell(trueX, trueY + 1).isAir()) {
                     //If the cell we clicked and one below it is air
-                    Mant newMant = new Mant(world, trueX, trueY);
+                    Mant newMant = new Mant(handler.getWorld(), trueX, trueY);
                     handler.addObject(newMant);
                 }
                 break;
@@ -127,7 +125,7 @@ public class MouseHandler {
                 break;
             case "BOMB":
                 //If we clicked air, and the cell below us isn't air, and the cell doesn't contain an item...
-                if(cell.isAir() && !world.getCell(trueX, trueY + 1).isAir() && !cell.hasItem()) {
+                if(cell.isAir() && !handler.getWorld().getCell(trueX, trueY + 1).isAir() && !cell.hasItem()) {
                     Bomb bomb = new Bomb(trueX, trueY, 2, 5);
                     handler.addObject(bomb);
                     cell.setItem(bomb);
@@ -193,10 +191,10 @@ public class MouseHandler {
                 Cell cellToSelect;
                 //If we are dragging to the right
                 if(startedDragX < mouseCellX) {
-                    cellToSelect = world.getCell((startedDragX + camXOffset) + i, (startedDragY + camYOffset));
+                    cellToSelect = handler.getWorld().getCell((startedDragX + camXOffset) + i, (startedDragY + camYOffset));
                 } else {
                     //We are dragging to the left
-                    cellToSelect = world.getCell((startedDragX + camXOffset) - i, (startedDragY + camYOffset));
+                    cellToSelect = handler.getWorld().getCell((startedDragX + camXOffset) - i, (startedDragY + camYOffset));
                 }
 
                 selection.add(cellToSelect);

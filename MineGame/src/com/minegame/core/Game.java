@@ -26,6 +26,8 @@ import java.text.DecimalFormat;
 public class Game extends Canvas implements Runnable {
     public static final int VIEWPORT_WIDTH = 1200;
     public static final int VIEWPORT_HEIGHT = 750;
+    public static final int WORLD_WIDTH = 125 * 4;
+    public static final int WORLD_HEIGHT = 75 * 4;
     public static GameState GAMESTATE = GameState.MENU;
 
     private Thread thread;
@@ -46,15 +48,16 @@ public class Game extends Canvas implements Runnable {
     private double usedMemory;
 
     private Game() {
-        World world = new World(125 * 4, 75 * 4);
-        this.camera = new Camera(0, world.getHeight() - VIEWPORT_HEIGHT, 0, VIEWPORT_WIDTH * 4);
-        this.handler = new Handler(world);
-        this.mHandler = new MouseHandler(this.handler, world);
-        this.menu = new Menu(this, handler);
-        this.hud = new HUD(this, mHandler);
+        this.handler = new Handler();
 
-        this.handler.setCamera(camera);
-        this.handler.setmHandler(mHandler);
+        this.camera = new Camera(0, (WORLD_HEIGHT * Cell.CELL_HEIGHT) - VIEWPORT_HEIGHT, 0, (WORLD_WIDTH * Cell.CELL_WIDTH) - VIEWPORT_WIDTH);
+
+        this.mHandler = new MouseHandler(this.handler);
+        this.menu = new Menu(this, this.handler);
+        this.hud = new HUD(this, this.mHandler);
+
+        this.handler.setCamera(this.camera);
+        this.handler.setmHandler(this.mHandler);
 
         camera.setY(300);
 

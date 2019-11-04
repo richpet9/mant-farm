@@ -25,6 +25,7 @@ public class Cell extends GameObject {
     private Color overlayColor = Color.white;
     private GameObject item = null;
     private Sprite icon = null;
+    private Color mainColor;
 
     public Cell(int pixelX, int pixelY, int cellX, int cellY) {
         this.cellX = cellX;
@@ -43,28 +44,11 @@ public class Cell extends GameObject {
 
     @Override
     public void render(Graphics2D g) {
-        if(!isAir() && icon == null) {
-            //Assign color based on element
-            switch(element) {
-                case DIRT: g.setColor(new Color(0x7E614F));
-                    break;
-                case ROCK: g.setColor(new Color(0x7A8691));
-                    break;
-                case IRON: g.setColor(new Color(0x7D5E5F));
-                    break;
-                case COPPER: g.setColor(new Color(0xB27643));
-                    break;
-                case SILVER: g.setColor(new Color(0xD4D4D4));
-                    break;
-                case GOLD: g.setColor(new Color(0xD7CA68));
-                    break;
-            }
-
-            g.fillRect(pixelX - cameraX , pixelY - cameraY , w, h);
-        }
-
-        if(icon != null) {
+        if(icon != null && !isAir()) {
             g.drawImage(icon.getImage(), pixelX - cameraX, pixelY - cameraY, w, h, null);
+        } else if(!isAir()) {
+            g.setColor(mainColor);
+            g.fillRect(pixelX - cameraX , pixelY - cameraY , w, h);
         }
 
         if(overlay) {
@@ -109,6 +93,24 @@ public class Cell extends GameObject {
     }
     public void setElement(Element element) {
         this.element = element;
+
+        //Assign color based on element
+        if(!isAir()) {
+            switch(this.element) {
+                case DIRT: mainColor = new Color(0x7E614F);
+                    break;
+                case ROCK: mainColor = new Color(0x7A8691);
+                    break;
+                case IRON: mainColor = new Color(0x7D5E5F);
+                    break;
+                case COPPER: mainColor = new Color(0xB27643);
+                    break;
+                case SILVER: mainColor = new Color(0xD4D4D4);
+                    break;
+                case GOLD: mainColor = new Color(0xD7CA68);
+                    break;
+            }
+        }
     }
     public void setDropChunk(Element chunk) {
         //Random chance of actually dropping the chunk

@@ -77,20 +77,11 @@ public class Chunk extends GameObject {
         //If the cell below us is air and doesn't have a chunk, move to it
         if(neighbor.isAir() && neighbor.hasNoChunk()) {
             //If the cell below us has an elevator, don't drop this chunk
-            //TODO: Extract all these TimeToMove blocks to their own "moveToCell()" method
-            timeToMove--;
-            if(timeToMove <= 0) {
-                world.getCell(cellX, cellY).setHasChunk(false);
-                cellX = neighborX;
-                cellY = neighborY;
-                pixelX = cellX * Cell.CELL_WIDTH;
-                pixelY = cellY * Cell.CELL_HEIGHT;
-
-                neighbor.setHasChunk(true);
-
-                timeToMove = MOVE_DELAY;
+            //If we are at the top of an elevator, fall to either left or right, determined by the next if
+            if(!(neighbor.hasItem() && neighbor.getItem().getID() == GameID.ELEVATOR)) {
+                moveToCell(neighbor);
+                return; //Early exit since the cell below us is clear, we are going there, don't check sides
             }
-            return;
         }
 
         //50/50 chance of checking left or right first
@@ -101,18 +92,8 @@ public class Chunk extends GameObject {
             neighbor = world.getCell(neighborX, neighborY);
 
             if(neighbor.isAir() && neighbor.hasNoChunk()) {
-                timeToMove--;
-                if(timeToMove <= 0) {
-                    world.getCell(cellX, cellY).setHasChunk(false);
-                    cellX = neighborX;
-                    cellY = neighborY;
-                    pixelX = cellX * Cell.CELL_WIDTH;
-                    pixelY = cellY * Cell.CELL_HEIGHT;
-
-                    neighbor.setHasChunk(true);
-
-                    timeToMove = MOVE_DELAY;
-                }
+                moveToCell(neighbor);
+                return; //Early exit because we found a cell to move to
             }
             //Check bottom right cell
             neighborY = Game.clamp(cellY + 1, 0, world.getNumY() - 1);
@@ -120,18 +101,7 @@ public class Chunk extends GameObject {
             neighbor = world.getCell(neighborX, neighborY);
 
             if(neighbor.isAir() && neighbor.hasNoChunk()) {
-                timeToMove--;
-                if(timeToMove <= 0) {
-                    world.getCell(cellX, cellY).setHasChunk(false);
-                    cellX = neighborX;
-                    cellY = neighborY;
-                    pixelX = cellX * Cell.CELL_WIDTH;
-                    pixelY = cellY * Cell.CELL_HEIGHT;
-
-                    neighbor.setHasChunk(true);
-
-                    timeToMove = MOVE_DELAY;
-                }
+                moveToCell(neighbor);
             }
         } else {
             //Check bottom right cell
@@ -140,18 +110,8 @@ public class Chunk extends GameObject {
             neighbor = world.getCell(neighborX, neighborY);
 
             if(neighbor.isAir() && neighbor.hasNoChunk()) {
-                timeToMove--;
-                if(timeToMove <= 0) {
-                    world.getCell(cellX, cellY).setHasChunk(false);
-                    cellX = neighborX;
-                    cellY = neighborY;
-                    pixelX = cellX * Cell.CELL_WIDTH;
-                    pixelY = cellY * Cell.CELL_HEIGHT;
-
-                    neighbor.setHasChunk(true);
-
-                    timeToMove = MOVE_DELAY;
-                }
+                moveToCell(neighbor);
+                return; //Early exit because we found a cell to move to
             }
             //Check bottom left cell
             neighborY = Game.clamp(cellY + 1, 0, world.getNumY() - 1);
@@ -159,22 +119,14 @@ public class Chunk extends GameObject {
             neighbor = world.getCell(neighborX, neighborY);
 
             if(neighbor.isAir() && neighbor.hasNoChunk()) {
-                timeToMove--;
-                if(timeToMove <= 0) {
-                    world.getCell(cellX, cellY).setHasChunk(false);
-                    cellX = neighborX;
-                    cellY = neighborY;
-                    pixelX = cellX * Cell.CELL_WIDTH;
-                    pixelY = cellY * Cell.CELL_HEIGHT;
-
-                    neighbor.setHasChunk(true);
-
-                    timeToMove = MOVE_DELAY;
-                }
+                moveToCell(neighbor);
             }
         }
     }
 
+    /**
+     * checkConveyors checks if this chunk is on any conveyors or elevators
+     */
     private void checkConveyors() {
         Cell currCell = world.getCell(cellX, cellY);
         if(currCell.getItem() != null) {
@@ -182,35 +134,35 @@ public class Chunk extends GameObject {
                  Conveyor conv = (Conveyor) currCell.getItem();
                  Cell neighbor = world.getCell(Game.clamp(cellX + conv.getDirection(), 0, world.getNumX() - 1), cellY);
                  if(neighbor.isAir() && neighbor.hasNoChunk()) {
-                     timeToMove--;
-                     if(timeToMove <= 0) {
-                         currCell.setHasChunk(false);
-                         cellX = neighbor.getCellX();
-                         cellY = neighbor.getCellY();
-                         pixelX = cellX * Cell.CELL_WIDTH;
-                         pixelY = cellY * Cell.CELL_HEIGHT;
-                         neighbor.setHasChunk(true);
-
-                         timeToMove = MOVE_DELAY;
-                     }
+                     moveToCell(neighbor);
                  }
             } else if(currCell.getItem().getID() == GameID.ELEVATOR) {
                 Cell neighbor = world.getCell(cellX, Game.clamp(cellY - 1, 0, world.getNumY() - 1));
                 if(neighbor.isAir() && neighbor.hasNoChunk()) {
-                    timeToMove--;
-                    if(timeToMove <= 0) {
-                        currCell.setHasChunk(false);
-                        cellX = neighbor.getCellX();
-                        cellY = neighbor.getCellY();
-                        pixelX = cellX * Cell.CELL_WIDTH;
-                        pixelY = cellY * Cell.CELL_HEIGHT;
-                        neighbor.setHasChunk(true);
-
-                        timeToMove = MOVE_DELAY;
-                    }
+                    moveToCell(neighbor);
                 }
             }
         }
 
     }
+
+    /**
+     * moveToCell will move this chunk to the specified cell, if timer permits
+     * @param neighbor The Cell to move to.
+     */
+    public void moveToCell(Cell neighbor) {
+        timeToMove--;
+        if(timeToMove <= 0) {
+            world.getCell(cellX, cellY).setHasChunk(false);
+            cellX = neighbor.getCellX();
+            cellY = neighbor.getCellY();
+            pixelX = cellX * Cell.CELL_WIDTH;
+            pixelY = cellY * Cell.CELL_HEIGHT;
+            neighbor.setHasChunk(true);
+
+            timeToMove = MOVE_DELAY;
+        }
+
+    }
+
 }

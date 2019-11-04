@@ -1,7 +1,9 @@
 package com.minegame.world;
 
 import com.minegame.core.Game;
+import com.minegame.core.Handler;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -14,6 +16,7 @@ public class World {
     private static int ROCK_LEVEL = 3;              //How many cells from a dirt  block is the rock level?
     private static int MAX_MOUNTAIN_HEIGHT = 50;    //How many cells from GOUND_LEVEL is the maximum mountain height?
     private static int MOUNTAIN_SMOOTHING = 3;      //Mountain smoothing factor (10 = very smooth, 1 = very steep)
+    private Handler handler;
     private int width;
     private int height;
     private Cell[][] cells;
@@ -21,7 +24,8 @@ public class World {
     private int numY;
     private Random rand = new Random();
 
-    public World(int numX, int numY) {
+    public World(Handler handler, int numX, int numY) {
+        this.handler = handler;
         this.numX = numX;
         this.numY = numY;
         this.width = this.numX * Cell.CELL_WIDTH;
@@ -29,6 +33,37 @@ public class World {
 
 
         this.cells = new Cell[numX][numY];
+
+        generateWorld();
+    }
+
+    public void tick() {
+        //TODO: Maybe pull a minecraft and only process cells within a certain distance or chunk
+        for(int x = 0; x < numX; x++) {
+            for(int y = 0; y < numY; y++) {
+                Cell cell = cells[x][y];
+
+                //Camera fix pixel shift
+                cell.setCameraXY(handler.getCamera().getX(), handler.getCamera().getY());
+
+                //If the cells has gravity and isn't in the last row
+                if(cell.dropChunk() != null) {
+                    Chunk newChunk = new Chunk(this, cell.dropChunk(), cell.getCellX(), cell.getCellY());
+                    handler.addObject(newChunk);
+                    cell.setDropChunk(null);
+                    cell.setHasChunk(true);
+                }
+            }
+        }
+    }
+
+    public void render(Graphics2D g) {
+        //This disgusting for loop only loops through the cells which are within the viewport
+        for(int x = (handler.getCamera().getX() / Cell.CELL_WIDTH); x <= (handler.getCamera().getX() / Cell.CELL_WIDTH) + (Game.VIEWPORT_WIDTH / Cell.CELL_WIDTH); x++) {
+            for(int y = (handler.getCamera().getY() / Cell.CELL_HEIGHT); y <= (handler.getCamera().getY() / Cell.CELL_HEIGHT) + (Game.VIEWPORT_WIDTH / Cell.CELL_HEIGHT); y++) {
+                cells[Game.clamp(x, 0, numX - 1)][Game.clamp(y, 0, numY - 1)].render(g);
+            }
+        }
     }
 
     private void createLand() {
