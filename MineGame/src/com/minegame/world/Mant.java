@@ -24,11 +24,9 @@ public class Mant extends GameObject {
     private Sprite icon;
     private Sprite iconGhost;
     private boolean onGround = false;
-    private boolean climbing = false;
     private boolean working = false;
     private int failedJobCooldown = 3;           //In seconds
     private long arrivalTime = -1;
-    private int climbingFromPixelY = -1;
     private double speed = 2 * (double) (Cell.CELL_WIDTH / 10);
 
     public Mant(World world, int cellX, int cellY) {
@@ -87,19 +85,6 @@ public class Mant extends GameObject {
                     }
                 }
             }
-        }
-
-        if(climbing) {
-            //If our current Y pos is one tile up, plus 3 pixels
-            if(pixelY <= (climbingFromPixelY - Cell.CELL_HEIGHT)) {
-                climbing = false;
-                //Slow down our upwards speed when we stop climbing
-                velY = (double) speed / 4;
-            } else {
-                velY = speed;
-            }
-            //Always block horizontal movement when climbing
-            velX = 0;
         }
 
         checkCollisions();
@@ -173,14 +158,6 @@ public class Mant extends GameObject {
                 //If any of the cells in the direction we are moving in,
                 //relative to our height, are solid, stop motion in that direction
                 if (boundingRect.intersects(cell.getBounds())) {
-                    //If the cell above us is air, and we are Mant, go there
-                    if (world.getCell(cellX, cellY - 1).isAir()) {
-                        //If the mant is not climbing, make it climb
-                        if (!climbing) {
-                            climbing = true;
-                            climbingFromPixelY = pixelY;
-                        }
-                    }
                     //Collision
                     velX = 0;
                     break;
@@ -196,9 +173,6 @@ public class Mant extends GameObject {
     public boolean isOnGround() {
         return onGround;
     }
-    public boolean isClimbing() {
-        return climbing;
-    }
     public boolean isWorking() {
         return working;
     }
@@ -211,10 +185,6 @@ public class Mant extends GameObject {
     }
     public void setOnGround(boolean onGround) {
         this.onGround = onGround;
-    }
-    public void setClimbing(boolean climbing) {
-        this.climbing = climbing;
-        climbingFromPixelY = pixelY;
     }
     public void setWorking(boolean working) {
         this.working = working;

@@ -17,6 +17,7 @@ public class Handler {
     private ArrayList<GameObject> objects = new ArrayList<GameObject>(64);    //All other GameObjects
     private ArrayList<Job> inProgressJobs;
     private JobQueue jobQueue;
+    private Player player;
     private Camera camera;
     private World world;
     private MouseHandler mHandler;
@@ -29,8 +30,13 @@ public class Handler {
 
     public void tick() {
         if(Game.GAMESTATE == GameState.PLAYING) {
-            //Tick the MouseHandler
+            //Set camera to follow player
+            camera.setX(Game.clamp(player.getPixelX() - (Game.VIEWPORT_WIDTH / 2), 0, Game.VIEWPORT_WIDTH));
+            camera.setY(Game.clamp(player.getPixelY() - (Game.VIEWPORT_HEIGHT / 2), 0, Game.VIEWPORT_HEIGHT));
+
+            //Tick the MouseHandler to move any active object we have selected
             mHandler.tick();
+            //Tick the world to update the cells
             world.tick();
 
 
@@ -124,6 +130,9 @@ public class Handler {
     public World getWorld() {
         return world;
     }
+    public Player getPlayer() {
+        return player;
+    }
 
     //Setters
     public void setCamera(Camera camera) {
@@ -149,9 +158,12 @@ public class Handler {
     }
 
     /**
-     * Tells the World to generate and add's all the Cells it creates to a list here
+     * Tells the World to generate and creates a player
      */
     public void generateWorld() {
         this.world = new World(this, Game.WORLD_WIDTH, Game.WORLD_HEIGHT);
+        this.player = new Player(this.world, 10, 0);
+        this.camera.setPlayer(this.player);
+        addObject(this.player);
     }
 }

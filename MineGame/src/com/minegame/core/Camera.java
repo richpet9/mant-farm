@@ -5,6 +5,7 @@ package com.minegame.core;
  * of every object the game renders, both Cells and GameObjects
  */
 public class Camera {
+    private Player player;
     private int y = 0; //the vertical location of the camera
     private int x = 0; //the vertical location of the camera
     private int offsetTop;
@@ -27,12 +28,17 @@ public class Camera {
         return y;
     }
 
+    //GETTERS
     public double getZoomLevel() {
         return zoomLevel;
     }
 
+    //SETTERS
     public void setY(int newY) {
         this.y = (int) Game.clamp(newY, offsetTop, offsetBottom);
+    }
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     public void setX(int newX) {

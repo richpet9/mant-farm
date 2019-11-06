@@ -35,23 +35,30 @@ public class KeyInput implements KeyListener {
         }
 
         //PRESSED W
-        if(e.getKeyCode() == KeyEvent.VK_W) {
-            handler.getCamera().setY((handler.getCamera().getY() - (10 * multiple)));
-        }
+//        if(e.getKeyCode() == KeyEvent.VK_W) {
+//            //handler.getCamera().setY((handler.getCamera().getY() - (10 * multiple)));
+//        }
 
         //PRESSED A
         if(e.getKeyCode() == KeyEvent.VK_A) {
-            handler.getCamera().setX((handler.getCamera().getX() - (10 * multiple)));
+            //handler.getCamera().setX((handler.getCamera().getX() - (10 * multiple)));
+            handler.getPlayer().setVelX(-2);
         }
 
         //PRESSED S
-        if(e.getKeyCode() == KeyEvent.VK_S) {
-            handler.getCamera().setY((handler.getCamera().getY() + (10 * multiple)));
-        }
+//        if(e.getKeyCode() == KeyEvent.VK_S) {
+//            //handler.getCamera().setY((handler.getCamera().getY() + (10 * multiple)));
+//        }
 
         //PRESSED D
         if(e.getKeyCode() == KeyEvent.VK_D) {
-            handler.getCamera().setX((handler.getCamera().getX() + (10 * multiple)));
+            //handler.getCamera().setX((handler.getCamera().getX() + (10 * multiple)));
+            handler.getPlayer().setVelX(2);
+        }
+
+        //PRESSED SPACE
+        if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+            handler.getPlayer().setVelY(5);
         }
 
         //PRESSED M
@@ -88,5 +95,10 @@ public class KeyInput implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
         keysPressed.remove((Integer) e.getKeyCode());
+
+        //If pressed A or D, reset horizontal velocity
+        if(e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_D) {
+            handler.getPlayer().setVelX(0);
+        }
     }
 }
